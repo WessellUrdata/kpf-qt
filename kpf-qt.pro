@@ -13,8 +13,12 @@ TEMPLATE = app
 
 
 SOURCES += src/main.cpp \
-    src/mainwindow.cpp
+    src/mainwindow.cpp \
+    src/inireader.cpp \
+    src/registryreader.cpp
 
-HEADERS  += src/mainwindow.h
+HEADERS  += src/mainwindow.h \
+    src/inireader.h \
+    src/registryreader.h
 
 FORMS    += src/mainwindow.ui
