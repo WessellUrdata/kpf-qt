@@ -1,1 +1,5 @@
 *.user
+src/Makefil*
+src/ui_*
+src/debug/
+src/release/
