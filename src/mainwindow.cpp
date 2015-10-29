@@ -254,6 +254,7 @@ void MainWindow::detectPaths()
 #endif
 }
 
+// I'll clean this method up later :p
 void MainWindow::steamShit(QString steamKey)
 {
 #ifdef Q_OS_WIN32
@@ -290,6 +291,20 @@ void MainWindow::steamShit(QString steamKey)
                     if(k2f.exists())
                         ui->leKotor2->setText(k2p.replace("\\\\", "\\"));
                 }
+				else
+				{
+					// KotOR 1
+					QString k1p = steamPath + "\\steamapps\\common\\swkotor";
+					QFile k1f(k1p + "\\swkotor.exe");
+					if(k1f.exists())
+						ui->leKotor->setText(k1p.replace("\\\\", "\\"));
+					
+					// KotOR 2
+					QString k2p = steamPath + "\\steamapps\\common\\Knights of the Old Republic II";
+					QFile k2f(k1p + "\\swkotor2.exe");
+					if(k2f.exists())
+						ui->leKotor2->setText(k2p.replace("\\\\", "\\"));
+				}
             }
         }
     }
