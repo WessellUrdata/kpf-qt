@@ -26,7 +26,7 @@ public slots:
     void onK1BrowseClicked();
     void onK2BrowseClicked();
     void onINIExportClicked();
-    void onRegistryExport();
+    void onRescanClicked();
 
     void onMenuItemExitClicked();
 

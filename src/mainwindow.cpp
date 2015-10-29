@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->connect(ui->bK1Browse, SIGNAL(clicked(bool)), this, SLOT(onK1BrowseClicked()));
     this->connect(ui->bK2Browse, SIGNAL(clicked(bool)), this, SLOT(onK2BrowseClicked()));
     this->connect(ui->bExportINI, SIGNAL(clicked(bool)), this, SLOT(onINIExportClicked()));
-    this->connect(ui->bExportReg, SIGNAL(clicked(bool)), this, SLOT(onRegistryExport()));
+    this->connect(ui->bRescan, SIGNAL(clicked(bool)), this, SLOT(onRescanClicked()));
 
     this->connect(ui->menuExit, SIGNAL(triggered(bool)), this, SLOT(onMenuItemExitClicked()));
 
@@ -72,7 +72,7 @@ void MainWindow::onK2BrowseClicked()
     if(result)
     {
         dir = dlg.selectedFiles()[0];
-        QFile file(dir + "\\swkotor2.exe");
+        QFile file(dir + "/swkotor2.exe");
         if(file.exists())
         {
 #ifdef Q_OS_WIN32
@@ -81,7 +81,7 @@ void MainWindow::onK2BrowseClicked()
             ui->leKotor2->setText(dir);
         }
         else
-            QMessageBox::critical(this, "Invalid Path", "swkotor2.exe was not found in this directory. Please try again", QMessageBox::Ok);
+            QMessageBox::critical(this, "Invalid Path", "swkotor2.exe was not found in this directory. Please try again");
     }
 }
 
@@ -108,7 +108,13 @@ void MainWindow::onINIExportClicked()
             reader.setValue("Paths", "K2_Path", ui->leKotor2->text());
 
             // kotor2 really needs special entry for it's regular saves?
-            reader.setValue("Paths", "K2_SavePath", ui->leKotor2->text() + "\\saves");
+            QString k2p;
+#ifdef Q_OS_WIN32
+            k2p = ui->leKotor2->text() + "\\saves";
+#else
+            k2p = ui->leKotor2->text() + "/saves";
+#endif
+            reader.setValue("Paths", "K2_SavePath", k2p);
         }
         else
         {
@@ -147,7 +153,7 @@ void MainWindow::onINIExportClicked()
     }
 }
 
-void MainWindow::onRegistryExport()
+void MainWindow::onRescanClicked()
 {
 #ifdef Q_OS_WIN32
     detectPaths();
@@ -237,6 +243,12 @@ void MainWindow::detectPaths()
     QFile file("kse.ini");
     if(file.exists())
         loadINI();
+//    else
+//    {
+//#ifdef Q_OS_UNIX
+//        // Linux systems. Mac will come later
+//#endif
+//    }
     else
         QMessageBox::information(this, "KPF Information", "kse.ini does not exist, and could not get info from Steam. Please find your game paths manually, and export to an INI.");
 #endif
@@ -244,6 +256,7 @@ void MainWindow::detectPaths()
 
 void MainWindow::steamShit(QString steamKey)
 {
+#ifdef Q_OS_WIN32
     RegistryReader reader;
     reader.open(steamKey);
 
@@ -280,6 +293,10 @@ void MainWindow::steamShit(QString steamKey)
             }
         }
     }
+#else Q_OS_UNIX
+    QString tempSteamPath = "/home/.local/share/Steam";
+
+#endif
 }
 
 void MainWindow::onMenuItemExitClicked()

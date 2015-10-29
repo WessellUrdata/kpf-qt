@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>550</width>
-    <height>128</height>
+    <height>143</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -69,9 +69,9 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="bExportReg">
+         <widget class="QPushButton" name="bRescan">
           <property name="text">
-           <string>Rescan Registry</string>
+           <string>Rescan Paths</string>
           </property>
          </widget>
         </item>
@@ -101,7 +101,7 @@
      <x>0</x>
      <y>0</y>
      <width>550</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">

@@ -3,3 +3,8 @@ src/Makefil*
 src/ui_*
 src/debug/
 src/release/
+*.swp
+*.swo
+src/kpf-qt
+src/*.o
+
