@@ -9,10 +9,10 @@ public:
     enum Root { HKLM, HKCU };
     RegistryReader();
     ~RegistryReader();
-//    void open(Root root, QString hive);
     void open(QString hive);
     QString getValue(QString key);
     bool hasKey(QString key);
+    bool hasGroup(QString group);
 
 
 

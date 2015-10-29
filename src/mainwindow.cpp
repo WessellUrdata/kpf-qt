@@ -199,42 +199,27 @@ void MainWindow::detectPaths()
     QFile ini("kse.ini");
     if(!ini.exists())
     {
-        QString gogKey = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\GOG.com";
+        QString gogKey32 = "HKEY_LOCAL_MACHINE\\SOFTWARE\\GOG.com";
+        QString gogKey64 = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\GOG.com";
         QString steamKey = "HKEY_CURRENT_USER\\SOFTWARE\\Valve\\Steam";
 
         // Check GOG first, it requires an extra step Steam doesn't
+        // check 64 bit first, just cause i said so :p
         RegistryReader gogReader;
-        gogReader.open(gogKey);
-        if(gogReader.hasKey("Games"))
+        gogReader.open(gogKey64);
+        if(gogReader.hasGroup("Games"))
         {
-            bool k1found = false, k2found = false;
-            RegistryReader reader;
-            reader.open(gogKey + "\\Games");
-            if(reader.hasKey("1207666283"))
-            {
-                reader.open(gogKey + "\\Games\\1207666283");
-                ui->leKotor->setText(reader.getValue("PATH"));
-                k1found = true;
-            }
-            reader.open(gogKey + "\\Games"); // Remember using reader to open another key? Gotta reopen the last one ;p
-            if(reader.hasKey("1421404581"))
-            {
-                reader.open(gogKey + "\\Games\\1421404581");
-                ui->leKotor2->setText(reader.getValue("PATH"));
-                k2found = true;
-            }
-
-            // Now we run the steam check if one or none of the
-            // following conditions are met
-            if(k1found == false || k2found == false)
-                steamShit(steamKey);
+            this->gogShit(steamKey, gogKey64); // pass both keys, cause it'll call steamShit() later on. It'll need that key
         }
         else
         {
-            // Here we do steam stuff. It's been placed in a seperate method in case
-            // One game is on GOG and another on Steam. Ya know, now everyone gets games
-            // on the same platform ;)
-            steamShit(steamKey); // I'll rename to something better later :p
+            QMessageBox::information(this, "", "32 has");
+            // GOGO 64 bit not found, now check 32 bit (since gog places in 64 key for 64 bit systems :p)
+            gogReader.open(gogKey32);
+            if(gogReader.hasGroup("Games"))
+            {
+                this->gogShit(steamKey, gogKey32);
+            }
         }
     }
     else
@@ -312,6 +297,31 @@ void MainWindow::steamShit(QString steamKey)
     QString tempSteamPath = "/home/.local/share/Steam";
 
 #endif
+}
+
+void MainWindow::gogShit(QString steamKey, QString gogKey)
+{
+    bool k1found = false, k2found = false;
+    RegistryReader reader;
+    reader.open(gogKey + "\\Games");
+    if(reader.hasKey("1207666283"))
+    {
+        reader.open(gogKey + "\\Games\\1207666283");
+        ui->leKotor->setText(reader.getValue("PATH"));
+        k1found = true;
+    }
+    reader.open(gogKey + "\\Games"); // Remember using reader to open another key? Gotta reopen the last one ;p
+    if(reader.hasKey("1421404581"))
+    {
+        reader.open(gogKey + "\\Games\\1421404581");
+        ui->leKotor2->setText(reader.getValue("PATH"));
+        k2found = true;
+    }
+
+    // Now we run the steam check if one or none of the
+    // following conditions are met
+    if((k1found == false || k2found == false))
+        steamShit(steamKey);
 }
 
 void MainWindow::onMenuItemExitClicked()
