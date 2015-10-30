@@ -29,6 +29,7 @@ public slots:
     void onRescanClicked();
 
     void onMenuItemExitClicked();
+    void onMenuItemAboutClicked();
 
 private:
     Ui::MainWindow *ui;

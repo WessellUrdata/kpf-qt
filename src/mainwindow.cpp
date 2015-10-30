@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->connect(ui->bRescan, SIGNAL(clicked(bool)), this, SLOT(onRescanClicked()));
 
     this->connect(ui->menuExit, SIGNAL(triggered(bool)), this, SLOT(onMenuItemExitClicked()));
+    this->connect(ui->menuAbout, SIGNAL(triggered(bool)), this, SLOT(onMenuItemAboutClicked()));
 
     detectPaths();
 
@@ -327,4 +328,9 @@ void MainWindow::gogShit(QString steamKey, QString gogKey)
 void MainWindow::onMenuItemExitClicked()
 {
     qApp->quit();
+}
+
+void MainWindow::onMenuItemAboutClicked()
+{
+    QMessageBox::information(this, "About KPF-Qt", "This is a cross-platform implementation of KPF built using the Qt framework. This is still a work in progress. Things will break, and not everything is done. Do not use in a normal environment. For testing only. You have been warned.");
 }

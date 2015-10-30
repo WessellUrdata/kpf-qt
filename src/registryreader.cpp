@@ -27,7 +27,6 @@ bool RegistryReader::hasKey(QString key)
 bool RegistryReader::hasGroup(QString group)
 {
     QStringList groups = this->s->childGroups();
-    int foundCount = 0;
     for(int i = 0; i < groups.count(); i++)
     {
         if(QString(groups[i]) == group)
