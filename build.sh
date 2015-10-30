@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# This build script has only been tested on Arch Linux
+# It may not work on other systems
+
 CWD=$(pwd)
 
 if [ -e "bin/linux/kpf-qt" ] ; then
