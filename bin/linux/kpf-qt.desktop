@@ -4,5 +4,6 @@ Version=0.1
 Type=Application
 Terminal=false
 Icon=
-Exec=kpf-qt
+Exec=/opt/kpf-qt/kpf-qt
+Categories=Game;
 
