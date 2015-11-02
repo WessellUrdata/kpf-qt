@@ -328,7 +328,7 @@ void MainWindow::steamShit(QString steamKey)
         }
     }
 #elif Q_OS_UNIX
-    QString tempSteamPath = "/home/.local/share/Steam";
+    QString tempSteamPath = QDir::homePath() + "/.local/share/Steam"; //"/home/.local/share/Steam";
 
 #endif
 }
