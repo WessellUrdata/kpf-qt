@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QRegularExpression>
+#include <QTextStream>
 
 #include "inireader.h"
 #include "registryreader.h"
@@ -27,6 +28,7 @@ public slots:
     void onK2BrowseClicked();
     void onINIExportClicked();
     void onRescanClicked();
+    void onUndoClicked();
 
     void onMenuItemExitClicked();
     void onMenuItemAboutClicked();

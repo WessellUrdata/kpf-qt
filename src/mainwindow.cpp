@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->connect(ui->bK2Browse, SIGNAL(clicked(bool)), this, SLOT(onK2BrowseClicked()));
     this->connect(ui->bExportINI, SIGNAL(clicked(bool)), this, SLOT(onINIExportClicked()));
     this->connect(ui->bRescan, SIGNAL(clicked(bool)), this, SLOT(onRescanClicked()));
+    this->connect(ui->bUndoExport, SIGNAL(clicked(bool)), this, SLOT(onUndoClicked()));
 
     this->connect(ui->menuExit, SIGNAL(triggered(bool)), this, SLOT(onMenuItemExitClicked()));
     this->connect(ui->menuAbout, SIGNAL(triggered(bool)), this, SLOT(onMenuItemAboutClicked()));
@@ -50,7 +51,7 @@ void MainWindow::onK1BrowseClicked()
     if(result)
     {
         dir = dlg.selectedFiles()[0];
-        QFile file(dir + "\\swkotor.exe");
+        QFile file(dir + "\\swkotor.exe"); //Win32 only. Not yet working on Mac. This'll be a bit different. We'll see
         if(file.exists())
         {
 #ifdef Q_OS_WIN32
@@ -88,6 +89,16 @@ void MainWindow::onK2BrowseClicked()
 
 void MainWindow::onINIExportClicked()
 {
+    // Let's make sure to back up the ini file shall we?
+    QFile ini("kse.ini");
+    if(ini.exists())
+    {
+#ifdef Q_OS_WIN32
+        ini.copy(QDir::homePath() + "/AppData/Roaming/kse.ini.bak");
+#else
+        ini.copy(QDir::homePath() + "/kse.ini.backup");
+#endif
+    }
     try
     {
         INIReader reader;
@@ -192,8 +203,6 @@ void MainWindow::loadINI()
     }
 }
 
-#include <QTextStream>
-
 void MainWindow::detectPaths()
 {
 #ifdef Q_OS_WIN32
@@ -266,35 +275,59 @@ void MainWindow::steamShit(QString steamKey)
                     QString instBasePath = line.replace("\"BaseInstallFolder_1\"", "").trimmed().replace("\"", "");
 
                     // KotOR 1
-                    QString k1p = instBasePath + "\\steamapps\\common\\swkotor";
-                    QFile k1f(k1p + "\\swkotor.exe");
+                    QString k1p = instBasePath + "/steamapps/common/swkotor";
+                    QFile k1f(k1p + "/swkotor.exe");
                     if(k1f.exists())
-                        ui->leKotor->setText(k1p.replace("\\\\", "\\"));
+                    {
+#ifdef Q_OS_WIN32
+                        ui->leKotor->setText(k1p.replace("\\\\", "\\").replace("/", "\\"));
+#else
+                        ui->leKotor->setText(k1p);
+#endif
+                    }
 
                     // KotOR 2
-                    QString k2p = instBasePath + "\\steamapps\\common\\Knights of the Old Republic II";
-                    QFile k2f(k2p + "\\swkotor2.exe");
+                    QString k2p = instBasePath + "/steamapps/common/Knights of the Old Republic II";
+                    QFile k2f(k2p + "/swkotor2.exe");
                     if(k2f.exists())
-                        ui->leKotor2->setText(k2p.replace("\\\\", "\\"));
+                    {
+#ifdef Q_OS_WIN32
+                        ui->leKotor2->setText(k2p.replace("\\\\", "\\").replace("/", "\\"));
+#else
+                        ui->leKotor2->setText(k2p);
+#endif
+                    }
                 }
 				else
 				{
-					// KotOR 1
-					QString k1p = steamPath + "\\steamapps\\common\\swkotor";
-					QFile k1f(k1p + "\\swkotor.exe");
-					if(k1f.exists())
-						ui->leKotor->setText(k1p.replace("\\\\", "\\"));
-					
-					// KotOR 2
-					QString k2p = steamPath + "\\steamapps\\common\\Knights of the Old Republic II";
-					QFile k2f(k1p + "\\swkotor2.exe");
-					if(k2f.exists())
-						ui->leKotor2->setText(k2p.replace("\\\\", "\\"));
+                    // KotOR 1
+                    QString k1p = steamPath + "/steamapps/common/swkotor";
+                    QFile k1f(k1p + "/swkotor.exe");
+                    if(k1f.exists())
+                    {
+#ifdef Q_OS_WIN32
+                        ui->leKotor->setText(k1p.replace("\\\\", "\\").replace("/", "\\"));
+#else
+                        ui->leKotor->setText(k1p);
+#endif
+                    }
+
+                    // KotOR 2
+                    QString k2p = steamPath + "/steamapps/common/Knights of the Old Republic II";
+                    QFile k2f(k2p + "/swkotor2.exe");
+                    if(k2f.exists())
+                    {
+#ifdef Q_OS_WIN32
+                        ui->leKotor2->setText(k2p.replace("\\\\", "\\").replace("/", "\\"));
+#else
+                        ui->leKotor2->setText(k2p);
+#endif
+                    }
 				}
             }
         }
     }
-#else Q_OS_UNIX
+#elif Q_OS_UNIX
     QString tempSteamPath = "/home/.local/share/Steam";
 
 #endif
@@ -333,4 +366,25 @@ void MainWindow::onMenuItemExitClicked()
 void MainWindow::onMenuItemAboutClicked()
 {
     QMessageBox::information(this, "About KPF-Qt", "This is a cross-platform implementation of KPF built using the Qt framework. This is still a work in progress. Things will break, and not everything is done. Do not use in a normal environment. For testing only. You have been warned.");
+}
+
+void MainWindow::onUndoClicked()
+{
+    QFile *ini;
+#ifdef Q_OS_WIN32
+    ini = new QFile(QDir::homePath() + "/AppData/Roaming/kse.ini.bak");
+#else
+    ini = new QFile(QDir::homePath() + "/kse.ini.backup");
+#endif
+
+    if(ini->exists())
+    {
+        QFile::remove("kse.ini");
+        ini->copy("kse.ini");
+        ini->remove();
+    }
+    else
+        QFile::remove("kse.ini");
+
+    QMessageBox::information(this, "Undo Export", "Export has been undone!");
 }
