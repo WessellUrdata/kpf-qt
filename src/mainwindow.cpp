@@ -9,6 +9,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // setup default values
     this->steamPath = "undef";
+    this->exported = false;
+    this->changed = false;
 
     this->connect(ui->bQuit, SIGNAL(clicked(bool)), this, SLOT(onQuitClicked()));
     this->connect(ui->bK1Browse, SIGNAL(clicked(bool)), this, SLOT(onK1BrowseClicked()));
@@ -17,10 +19,13 @@ MainWindow::MainWindow(QWidget *parent) :
     this->connect(ui->bRescan, SIGNAL(clicked(bool)), this, SLOT(onRescanClicked()));
     this->connect(ui->bUndoExport, SIGNAL(clicked(bool)), this, SLOT(onUndoClicked()));
 
+    this->connect(ui->leKotor, SIGNAL(textEdited(QString)), this, SLOT(onTextChanged(QString)));
+    this->connect(ui->leKotor2, SIGNAL(textEdited(QString)), this, SLOT(onTextChanged(QString)));
+
     this->connect(ui->menuExit, SIGNAL(triggered(bool)), this, SLOT(onMenuItemExitClicked()));
     this->connect(ui->menuAbout, SIGNAL(triggered(bool)), this, SLOT(onMenuItemAboutClicked()));
 
-    detectPaths();
+    detectPaths(false);
 
     // OS specific gaming stuff
     // certain ones are not on certain OSs
@@ -36,9 +41,31 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::onTextChanged(QString)
+{
+    this->changed = true;
+}
+
+// subclassing QMainWindow for closing event
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if(changed)
+    {
+        QMessageBox::StandardButton reply = QMessageBox::information(this, "Unsaved Changes", "Changes have been made in KPF. Are you sure you want to close without saving changes", QMessageBox::Yes | QMessageBox::No);
+
+        if(reply == QMessageBox::No)
+            event->ignore();
+    }
+
+    // We're not ignoring the event now, let's destroy our backup file!
+    QFile file(INI_BACKUP);
+    if(file.exists())
+        file.remove();
+}
+
 void MainWindow::onQuitClicked()
 {
-    qApp->quit();
+    this->close();
 }
 
 void MainWindow::onK1BrowseClicked()
@@ -51,7 +78,7 @@ void MainWindow::onK1BrowseClicked()
     if(result)
     {
         dir = dlg.selectedFiles()[0];
-        QFile file(dir + "\\swkotor.exe"); //Win32 only. Not yet working on Mac. This'll be a bit different. We'll see
+        QFile file(dir + KOTOR_EXE); //Win32 only. Not yet working on Mac. This'll be a bit different. We'll see
         if(file.exists())
         {
 #ifdef Q_OS_WIN32
@@ -74,7 +101,7 @@ void MainWindow::onK2BrowseClicked()
     if(result)
     {
         dir = dlg.selectedFiles()[0];
-        QFile file(dir + "/swkotor2.exe");
+        QFile file(dir + KOTOR2_EXE);
         if(file.exists())
         {
 #ifdef Q_OS_WIN32
@@ -92,13 +119,8 @@ void MainWindow::onINIExportClicked()
     // Let's make sure to back up the ini file shall we?
     QFile ini("kse.ini");
     if(ini.exists())
-    {
-#ifdef Q_OS_WIN32
-        ini.copy(QDir::homePath() + "/AppData/Roaming/kse.ini.bak");
-#else
-        ini.copy(QDir::homePath() + "/kse.ini.backup");
-#endif
-    }
+        ini.copy(INI_BACKUP);
+
     try
     {
         INIReader reader;
@@ -137,7 +159,7 @@ void MainWindow::onINIExportClicked()
         }
 
         // KotOR 2 cloud saves check
-        QDir csdir(ui->leKotor2->text() + "\\cloudsaves\\");
+        QDir csdir(ui->leKotor2->text() + "/cloudsaves/");
         QStringList dirs = csdir.entryList();
         for(int i = 0; i < dirs.count(); i++)
         {
@@ -146,7 +168,11 @@ void MainWindow::onINIExportClicked()
             if(match.hasMatch())
             {
                 reader.setValue("Options", "Use_K2_Cloud", "1");
+#ifdef Q_OS_WIN32
                 reader.setValue("Paths", "K2_SavePathCloud", QString(csdir.absolutePath() + "\\" + dirs[i]).replace("/", "\\"));
+#else
+                reader.setValue("Paths", "K2_SavePathCloud", QString(csdir.absolutePath() + "/" + dirs[i]));
+#endif
                 break;
             }
             else
@@ -158,6 +184,9 @@ void MainWindow::onINIExportClicked()
 
         reader.setValue("Paths", "Steam_Path", steamPath);
         QMessageBox::information(this, "INI Export", "Contents successfully exported to kse.ini");
+
+        this->exported = true;
+        this->changed = false;
     }
     catch(...)
     {
@@ -168,7 +197,7 @@ void MainWindow::onINIExportClicked()
 void MainWindow::onRescanClicked()
 {
 #ifdef Q_OS_WIN32
-    detectPaths();
+    detectPaths(true);
     QMessageBox::information(this, "Rescan Complete", QString("Registry rescanning has been complete. You should now see your paths in the main window. ")
                              + "If you do not, they could not be obtained by the registry. Please add them manually.");
 #else
@@ -189,152 +218,128 @@ void MainWindow::loadINI()
 
         if(k1path != "undef")
         {
-            QFile file(k1path + "\\swkotor.exe");
+            QFile file(k1path + KOTOR_EXE);
             if(file.exists())
                 ui->leKotor->setText(k1path);
         }
 
         if(k2path != "undef")
         {
-            QFile file(k2path + "\\swkotor2.exe");
+            QFile file(k2path + KOTOR2_EXE);
             if(file.exists())
                 ui->leKotor2->setText(k2path);
         }
     }
 }
 
-void MainWindow::detectPaths()
+void MainWindow::detectPaths(bool rescan)
 {
-#ifdef Q_OS_WIN32
     QFile ini("kse.ini");
-    if(!ini.exists())
+    if(ini.exists() && !rescan)
+        loadINI();
+    else
     {
-        QString gogKey32 = "HKEY_LOCAL_MACHINE\\SOFTWARE\\GOG.com";
-        QString gogKey64 = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\GOG.com";
-        QString steamKey = "HKEY_CURRENT_USER\\SOFTWARE\\Valve\\Steam";
-
-        // Check GOG first, it requires an extra step Steam doesn't
-        // check 64 bit first, just cause i said so :p
-        RegistryReader gogReader;
-        gogReader.open(gogKey64);
-        if(gogReader.hasGroup("Games"))
-        {
-            this->gogShit(steamKey, gogKey64); // pass both keys, cause it'll call steamShit() later on. It'll need that key
-        }
+        this->changed = true;
+#ifdef Q_OS_WIN32
+        RegistryReader reader;
+        reader.open(GOG_64_REG_KEY);
+        if(reader.hasGroup("Games"))
+            this->gogShit(GOG_64_REG_KEY);
         else
         {
-            QMessageBox::information(this, "", "32 has");
-            // GOGO 64 bit not found, now check 32 bit (since gog places in 64 key for 64 bit systems :p)
-            gogReader.open(gogKey32);
-            if(gogReader.hasGroup("Games"))
-            {
-                this->gogShit(steamKey, gogKey32);
-            }
+            reader.open(GOG_32_REG_KEY);
+            if(reader.hasGroup("Games"))
+                this->gogShit(GOG_32_REG_KEY);
+            else
+                this->steamShit();
         }
-    }
-    else
-        loadINI();
 #else
-    QFile file("kse.ini");
-    if(file.exists())
-        loadINI();
-//    else
-//    {
-//#ifdef Q_OS_UNIX
-//        // Linux systems. Mac will come later
-//#endif
-//    }
-    else
-        QMessageBox::information(this, "KPF Information", "kse.ini does not exist, and could not get info from Steam. Please find your game paths manually, and export to an INI.");
+        this->steamShit();
 #endif
+    }
 }
 
-// I'll clean this method up later :p
-void MainWindow::steamShit(QString steamKey)
+// <OLD_COMMENT>I'll clean this method up later :p</OLD_COMMENT>
+// Method is cleaned up a bit. I'll rename later
+void MainWindow::steamShit()
 {
+    QFile file(DEFAULT_STEAM_PATH + STEAM_EXE);
+    if(file.exists())
+    {
+        steamPath = DEFAULT_STEAM_PATH;
+    }
+    else
+    {
 #ifdef Q_OS_WIN32
-    RegistryReader reader;
-    reader.open(steamKey);
+        RegistryReader reader;
+        reader.open(STEAM_REG_KEY);
 
-    // Win32 slash fix (registry is win32 only anyhow, no need for preprocessor check'
-    if(reader.getValue("SteamPath") != "")
-        steamPath = reader.getValue("SteamPath").replace("/", "\\");
+        if(reader.getValue("SteamPath") != "")
+            steamPath = reader.getValue("SteamPath").replace("/", "\\");
+#else
+        QMessageBox::critical(this, "Error", "Default Steam Path was not found, closing. (This will be fixed later...");
+#endif
+    }
 
-    QFile steamExe(steamPath + "\\steam.exe");
+    QFile steamExe(steamPath + STEAM_EXE);
     if(steamExe.exists())
     {
-        QFile config(steamPath + "\\config\\config.vdf");
+        QFile config(steamPath + "/config/config.vdf");
         if(config.open(QIODevice::ReadOnly | QIODevice::Text))
         {
             QTextStream in(&config);
+            bool k = false, kk = false; // might remove...
             while(!in.atEnd())
             {
                 QString line = in.readLine();
-                if(line.trimmed().startsWith("\"BaseInstallFolder_1\""))
+                // I don't see users using this many install directories. Do you? Nah :p
+                // A nice buffer I guess
+                for(int i = 0; i < 50; i++)
                 {
-                    QString instBasePath = line.replace("\"BaseInstallFolder_1\"", "").trimmed().replace("\"", "");
-
-                    // KotOR 1
-                    QString k1p = instBasePath + "/steamapps/common/swkotor";
-                    QFile k1f(k1p + "/swkotor.exe");
-                    if(k1f.exists())
+                    if(line.trimmed().startsWith(QString("\"BaseInstallFolder_%1\"").arg(i)))
                     {
+                        QString instBasePath = line.replace(QString("\"BaseInstallFolder_%1\"").arg(i), "").trimmed().replace("\"", "");
+
+                        QString k1f(instBasePath + KOTOR_PATH);
+                        QString k2f(instBasePath + KOTOR2_PATH);
 #ifdef Q_OS_WIN32
-                        ui->leKotor->setText(k1p.replace("\\\\", "\\").replace("/", "\\"));
-#else
-                        ui->leKotor->setText(k1p);
+                        k1f.replace("\\\\", "\\").replace("/", "\\");
+                        k2f.replace("\\\\", "\\").replace("/", "\\");
 #endif
+                        QFile k1(k1f + KOTOR_EXE);
+                        if(k1.exists())
+                        {
+                            ui->leKotor->setText(k1f);
+                            k = true;
+                        }
+
+                        QFile k2(k2f + KOTOR2_EXE);
+                        if(k2.exists())
+                        {
+                            ui->leKotor2->setText(k2f);
+                            kk = true;
+                        }
                     }
 
-                    // KotOR 2
-                    QString k2p = instBasePath + "/steamapps/common/Knights of the Old Republic II";
-                    QFile k2f(k2p + "/swkotor2.exe");
-                    if(k2f.exists())
+                    // Be prepared. Big if statement, I'll do what I can
+                    // to clean it up later
+                    if((k && kk) ||
+                            (k || kk))
                     {
-#ifdef Q_OS_WIN32
-                        ui->leKotor2->setText(k2p.replace("\\\\", "\\").replace("/", "\\"));
-#else
-                        ui->leKotor2->setText(k2p);
-#endif
+                        break;
                     }
                 }
-				else
-				{
-                    // KotOR 1
-                    QString k1p = steamPath + "/steamapps/common/swkotor";
-                    QFile k1f(k1p + "/swkotor.exe");
-                    if(k1f.exists())
-                    {
-#ifdef Q_OS_WIN32
-                        ui->leKotor->setText(k1p.replace("\\\\", "\\").replace("/", "\\"));
-#else
-                        ui->leKotor->setText(k1p);
-#endif
-                    }
-
-                    // KotOR 2
-                    QString k2p = steamPath + "/steamapps/common/Knights of the Old Republic II";
-                    QFile k2f(k2p + "/swkotor2.exe");
-                    if(k2f.exists())
-                    {
-#ifdef Q_OS_WIN32
-                        ui->leKotor2->setText(k2p.replace("\\\\", "\\").replace("/", "\\"));
-#else
-                        ui->leKotor2->setText(k2p);
-#endif
-                    }
-				}
             }
         }
     }
-#elif Q_OS_UNIX
-    QString tempSteamPath = QDir::homePath() + "/.local/share/Steam"; //"/home/.local/share/Steam";
 
-#endif
+
 }
 
-void MainWindow::gogShit(QString steamKey, QString gogKey)
+// GOG stuff is win32 for now. I'll work with other OS's when GOG adds KotOR2 to Linux
+void MainWindow::gogShit(QString gogKey)
 {
+#ifdef Q_OS_WIN32
     bool k1found = false, k2found = false;
     RegistryReader reader;
     reader.open(gogKey + "\\Games");
@@ -355,7 +360,10 @@ void MainWindow::gogShit(QString steamKey, QString gogKey)
     // Now we run the steam check if one or none of the
     // following conditions are met
     if((k1found == false || k2found == false))
-        steamShit(steamKey);
+        this->steamShit();
+#else
+    this->steamShit();
+#endif
 }
 
 void MainWindow::onMenuItemExitClicked()
@@ -370,21 +378,23 @@ void MainWindow::onMenuItemAboutClicked()
 
 void MainWindow::onUndoClicked()
 {
-    QFile *ini;
-#ifdef Q_OS_WIN32
-    ini = new QFile(QDir::homePath() + "/AppData/Roaming/kse.ini.bak");
-#else
-    ini = new QFile(QDir::homePath() + "/kse.ini.backup");
-#endif
-
-    if(ini->exists())
+    QFile ini("kse.ini");
+    if(ini.exists() && this->exported)
     {
-        QFile::remove("kse.ini");
-        ini->copy("kse.ini");
-        ini->remove();
+        QFile tempini(INI_BACKUP);
+
+        if(tempini.exists())
+        {
+            QFile::remove("kse.ini");
+            tempini.copy("kse.ini");
+            tempini.remove();
+        }
+        else
+            QFile::remove("kse.ini");
+
+        QMessageBox::information(this, "Undo Export", "Export has been undone!");
+        this->exported = false;
     }
     else
-        QFile::remove("kse.ini");
-
-    QMessageBox::information(this, "Undo Export", "Export has been undone!");
+        QMessageBox::critical(this, "Undo Export", "Could not undo export. No changes were made");
 }

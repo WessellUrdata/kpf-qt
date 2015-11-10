@@ -6,7 +6,9 @@
 #include <QMessageBox>
 #include <QRegularExpression>
 #include <QTextStream>
+#include <QCloseEvent>
 
+#include "refs.h"
 #include "inireader.h"
 #include "registryreader.h"
 
@@ -33,15 +35,20 @@ public slots:
     void onMenuItemExitClicked();
     void onMenuItemAboutClicked();
 
+    void onTextChanged(QString);
+
 private:
     Ui::MainWindow *ui;
+    void closeEvent(QCloseEvent *event);
     void loadINI();
-    void detectPaths();
-    void steamShit(QString steamKey);
-    void gogShit(QString steamKey, QString gogKey);
+    void detectPaths(bool rescan);
+    void steamShit();
+    void gogShit(QString gogKey);
 
     QString steamPath;
     bool k1onPlat;
+    bool exported;
+    bool changed;
 };
 
 #endif // MAINWINDOW_H

@@ -19,6 +19,7 @@ SOURCES += src/main.cpp \
 
 HEADERS  += src/mainwindow.h \
     src/inireader.h \
-    src/registryreader.h
+    src/registryreader.h \
+    src/refs.h
 
 FORMS    += src/mainwindow.ui
