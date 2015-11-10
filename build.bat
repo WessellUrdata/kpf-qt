@@ -10,12 +10,13 @@ set MAKE="%PROGRAMFILES(x86)%\GnuWin32\bin\make.exe"
 if exist bin\win32\kpf-qt.exe goto clean
 
 :build
+set /p j="How many threads do you want running for compilation? "
 echo.
 echo building makefile
 %QMAKE% kpf-qt.pro -o src\Makefile
 echo.
 echo compiling binary
-%MAKE% -C src
+%MAKE% -j%j% -C src
 copy /Y src\release\kpf-qt.exe "%CWD%\bin\win32\kpf-qt.exe"
 echo.
 echo copyting required libraries
