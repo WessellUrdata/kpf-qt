@@ -274,7 +274,7 @@ void MainWindow::detectPaths(bool rescan)
 // Method is cleaned up a bit. I'll rename later
 void MainWindow::steamShit()
 {
-    QFile file(DEFAULT_STEAM_PATH + STEAM_EXE);
+    QFile file(QString("%1%2").arg(DEFAULT_STEAM_PATH, STEAM_EXE));
     if(file.exists())
     {
         steamPath = DEFAULT_STEAM_PATH;
@@ -353,7 +353,7 @@ void MainWindow::steamShit()
 }
 
 // GOG stuff is win32 for now. I'll work with other OS's when GOG adds KotOR2 to Linux
-void MainWindow::gogShit()
+void MainWindow::gogShit(QString gogKey)
 {
 #ifdef Q_OS_WIN32
     bool k1found = false, k2found = false;

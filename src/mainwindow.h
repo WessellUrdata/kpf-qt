@@ -45,7 +45,7 @@ private:
     void loadINI();
     void detectPaths(bool rescan);
     void steamShit();
-    void gogShit();
+    void gogShit(QString gogKey);
 
     QString steamPath;
     bool k1onPlat;
