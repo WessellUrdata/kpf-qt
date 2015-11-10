@@ -9,27 +9,29 @@
  * All constants will be stored in here
  */
 
-#define KOTOR_PATH QString("/steamapps/common/swkotor")
-#define KOTOR2_PATH QString("/steamapps/common/Knights of the Old Republic II")
+#define KOTOR_PATH "/steamapps/common/swkotor"
+#define KOTOR2_PATH "/steamapps/common/Knights of the Old Republic II"
 
 #ifdef Q_OS_WIN32
-#define KOTOR_EXE QString("/swkotor.exe")
-#define KOTOR2_EXE QString("/swkotor2.exe")
-#define DEFAULT_STEAM_PATH QString("C:\\Program Files (x86)\\Steam")
-#define STEAM_EXE QString("/steam.exe")
+#define KOTOR_EXE "/swkotor.exe"
+#define KOTOR2_EXE "/swkotor2.exe"
+#define KOTOR2_CLOUD_SAVES "/cloudsaves"
+#define DEFAULT_STEAM_PATH "C:\\Program Files (x86)\\Steam"
+#define STEAM_EXE "/steam.exe"
 #define INI_BACKUP QString("%1/AppData/Local/Temp/kse.ini.bak").arg(QDir::homePath())
 #else
-#define KOTOR_EXE QString("/swkotor")
-#define KOTOR2_EXE QString("/swkotor2")
-#define DEFAULT_STEAM_PATH QString(QDir::homePath() + "/.local/share/Steam")
-#define STEAM_EXE QString("/steam")
+#define KOTOR_EXE "/swkotor"
+#define KOTOR2_EXE "/KOTOR2"
+#define KOTOR2_SAVES QString("%1/.local/share/aspyr-media/kotor2/saves").arg(QDir::homePath())
+#define DEFAULT_STEAM_PATH QString("%1/.local/share/Steam").arg(QDir::homePath())
+#define STEAM_EXE "/steam.sh"
 #define INI_BACKUP QString("%1/.local/kse.ini.backup").arg(QDir::homePath())
 #endif
 
 #ifdef Q_OS_WIN32
-#define STEAM_REG_KEY QString("HKEY_CURRENT_USER\\SOFTWARE\\Valve\\Steam")
-#define GOG_32_REG_KEY QString("HKEY_LOCAL_MACHINE\\SOFTWARE\\GOG.com")
-#define GOG_64_REG_KEY QString("HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\GOG.com")
+#define STEAM_REG_KEY "HKEY_CURRENT_USER\\SOFTWARE\\Valve\\Steam"
+#define GOG_32_REG_KEY "HKEY_LOCAL_MACHINE\\SOFTWARE\\GOG.com"
+#define GOG_64_REG_KEY "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\GOG.com"
 #define KOTOR_CD_REG_KEY ""
 #define KOTOR2_CD_REG_KEY ""
 #endif

@@ -15,11 +15,14 @@ TEMPLATE = app
 SOURCES += src/main.cpp \
     src/mainwindow.cpp \
     src/inireader.cpp \
-    src/registryreader.cpp
+    src/registryreader.cpp \
+    src/aboutdialog.cpp
 
 HEADERS  += src/mainwindow.h \
     src/inireader.h \
     src/registryreader.h \
-    src/refs.h
+    src/refs.h \
+    src/aboutdialog.h
 
-FORMS    += src/mainwindow.ui
+FORMS    += src/mainwindow.ui \
+    src/aboutdialog.ui

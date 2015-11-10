@@ -7,10 +7,27 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    // Center window on screen
+    QRect pos = frameGeometry();
+    pos.moveCenter(QDesktopWidget().availableGeometry().center());
+    move(pos.topLeft());
+
     // setup default values
     this->steamPath = "undef";
     this->exported = false;
     this->changed = false;
+
+    // OS specific gaming stuff
+    // certain ones are not on certain OSs
+#ifdef Q_OS_UNIX
+    ui->leKotor->setEnabled(false);
+    ui->leKotor->setText("KotOR is not available on this platform!");
+    k1onPlat = false;
+#endif
+
+    // Keyboard shortcuts
+    ui->menuExit->setShortcut(Qt::CTRL | Qt::Key_Q);
+    ui->menuAbout->setShortcut(Qt::Key_F1);
 
     this->connect(ui->bQuit, SIGNAL(clicked(bool)), this, SLOT(onQuitClicked()));
     this->connect(ui->bK1Browse, SIGNAL(clicked(bool)), this, SLOT(onK1BrowseClicked()));
@@ -26,14 +43,6 @@ MainWindow::MainWindow(QWidget *parent) :
     this->connect(ui->menuAbout, SIGNAL(triggered(bool)), this, SLOT(onMenuItemAboutClicked()));
 
     detectPaths(false);
-
-    // OS specific gaming stuff
-    // certain ones are not on certain OSs
-#ifdef Q_OS_UNIX
-    ui->leKotor->setEnabled(false);
-    ui->leKotor->setText("KotOR is not available on this platform!");
-    k1onPlat = false;
-#endif
 }
 
 MainWindow::~MainWindow()
@@ -127,8 +136,13 @@ void MainWindow::onINIExportClicked()
         reader.open("kse.ini");
         if(ui->leKotor->text() != "" || !k1onPlat)
         {
+#ifdef Q_OS_UNIX
+            reader.setValue("Installed", "K1_Installed", "0");
+            reader.setValue("Paths", "K1_Path", "undef");
+#else
             reader.setValue("Installed", "K1_Installed", "1");
             reader.setValue("Paths", "K1_Path", ui->leKotor->text());
+#endif
         }
         else
         {
@@ -146,7 +160,7 @@ void MainWindow::onINIExportClicked()
 #ifdef Q_OS_WIN32
             k2p = ui->leKotor2->text() + "\\saves";
 #else
-            k2p = ui->leKotor2->text() + "/saves";
+            k2p = KOTOR2_SAVES;
 #endif
             reader.setValue("Paths", "K2_SavePath", k2p);
         }
@@ -196,13 +210,10 @@ void MainWindow::onINIExportClicked()
 
 void MainWindow::onRescanClicked()
 {
-#ifdef Q_OS_WIN32
     detectPaths(true);
-    QMessageBox::information(this, "Rescan Complete", QString("Registry rescanning has been complete. You should now see your paths in the main window. ")
-                             + "If you do not, they could not be obtained by the registry. Please add them manually.");
-#else
-    QMessageBox::critical(this, "Win32", "This option is only available on Windows. Sorry.");
-#endif
+    QMessageBox::information(this, "Rescan Complete", QString(
+                                 "Rescaning has completed. You should now see your paths in the main window. ")
+                                 + "If you do not, they could not be obtained automatically. Please add them manually");
 }
 
 void MainWindow::loadINI()
@@ -292,33 +303,38 @@ void MainWindow::steamShit()
             while(!in.atEnd())
             {
                 QString line = in.readLine();
+                QString k1f;
+                QString k2f;
                 // I don't see users using this many install directories. Do you? Nah :p
                 // A nice buffer I guess
                 for(int i = 0; i < 50; i++)
                 {
+                    QString instBasePath;
                     if(line.trimmed().startsWith(QString("\"BaseInstallFolder_%1\"").arg(i)))
-                    {
-                        QString instBasePath = line.replace(QString("\"BaseInstallFolder_%1\"").arg(i), "").trimmed().replace("\"", "");
+                        instBasePath = line.replace(QString("\"BaseInstallFolder_%1\"").arg(i), "").trimmed().replace("\"", "");
+                    else
+                        instBasePath = steamPath;
 
-                        QString k1f(instBasePath + KOTOR_PATH);
-                        QString k2f(instBasePath + KOTOR2_PATH);
+                    k1f = QString("%1%2").arg(instBasePath, KOTOR_PATH);
+                    k2f = QString("%1%2").arg(instBasePath, KOTOR2_PATH);
+
 #ifdef Q_OS_WIN32
-                        k1f.replace("\\\\", "\\").replace("/", "\\");
-                        k2f.replace("\\\\", "\\").replace("/", "\\");
+                    k1f.replace("\\\\", "\\").replace("/", "\\");
+                    k2f.replace("\\\\", "\\").replace("/", "\\");
 #endif
-                        QFile k1(k1f + KOTOR_EXE);
-                        if(k1.exists())
-                        {
-                            ui->leKotor->setText(k1f);
-                            k = true;
-                        }
+                    QFile k1(k1f + KOTOR_EXE);
 
-                        QFile k2(k2f + KOTOR2_EXE);
-                        if(k2.exists())
-                        {
-                            ui->leKotor2->setText(k2f);
-                            kk = true;
-                        }
+                    if(k1.exists())
+                    {
+                        ui->leKotor->setText(k1f);
+                        k = true;
+                    }
+
+                    QFile k2(k2f + KOTOR2_EXE);
+                    if(k2.exists())
+                    {
+                        ui->leKotor2->setText(k2f);
+                        kk = true;
                     }
 
                     // Be prepared. Big if statement, I'll do what I can
@@ -337,7 +353,7 @@ void MainWindow::steamShit()
 }
 
 // GOG stuff is win32 for now. I'll work with other OS's when GOG adds KotOR2 to Linux
-void MainWindow::gogShit(QString gogKey)
+void MainWindow::gogShit()
 {
 #ifdef Q_OS_WIN32
     bool k1found = false, k2found = false;
@@ -373,7 +389,8 @@ void MainWindow::onMenuItemExitClicked()
 
 void MainWindow::onMenuItemAboutClicked()
 {
-    QMessageBox::information(this, "About KPF-Qt", "This is a cross-platform implementation of KPF built using the Qt framework. This is still a work in progress. Things will break, and not everything is done. Do not use in a normal environment. For testing only. You have been warned.");
+    AboutDialog *dlg = new AboutDialog();
+    dlg->show();
 }
 
 void MainWindow::onUndoClicked()
