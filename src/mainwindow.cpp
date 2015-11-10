@@ -126,14 +126,14 @@ void MainWindow::onK2BrowseClicked()
 void MainWindow::onINIExportClicked()
 {
     // Let's make sure to back up the ini file shall we?
-    QFile ini("kse.ini");
+    QFile ini(INI_PATH);
     if(ini.exists())
         ini.copy(INI_BACKUP);
 
     try
     {
         INIReader reader;
-        reader.open("kse.ini");
+        reader.open(INI_PATH);
         if(ui->leKotor->text() != "" || !k1onPlat)
         {
 #ifdef Q_OS_UNIX
@@ -197,7 +197,7 @@ void MainWindow::onINIExportClicked()
         }
 
         reader.setValue("Paths", "Steam_Path", steamPath);
-        QMessageBox::information(this, "INI Export", "Contents successfully exported to kse.ini");
+        QMessageBox::information(this, "INI Export", QString("Contents successfully exported to %1").arg(INI_PATH));
 
         this->exported = true;
         this->changed = false;
@@ -218,11 +218,11 @@ void MainWindow::onRescanClicked()
 
 void MainWindow::loadINI()
 {
-    QFile iniFile("kse.ini");
+    QFile iniFile(INI_PATH);
     if(iniFile.exists())
     {
         INIReader reader;
-        reader.open("kse.ini");
+        reader.open(INI_PATH);
         QString k1path = reader.getValue("Paths", "K1_Path");
         QString k2path = reader.getValue("Paths", "K2_Path");
         steamPath = reader.getValue("Paths", "Steam_Path");
@@ -245,7 +245,7 @@ void MainWindow::loadINI()
 
 void MainWindow::detectPaths(bool rescan)
 {
-    QFile ini("kse.ini");
+    QFile ini(INI_PATH);
     if(ini.exists() && !rescan)
         loadINI();
     else
@@ -395,19 +395,19 @@ void MainWindow::onMenuItemAboutClicked()
 
 void MainWindow::onUndoClicked()
 {
-    QFile ini("kse.ini");
+    QFile ini(INI_PATH);
     if(ini.exists() && this->exported)
     {
         QFile tempini(INI_BACKUP);
 
         if(tempini.exists())
         {
-            QFile::remove("kse.ini");
-            tempini.copy("kse.ini");
+            QFile::remove(INI_PATH);
+            tempini.copy(INI_PATH);
             tempini.remove();
         }
         else
-            QFile::remove("kse.ini");
+            QFile::remove(INI_PATH);
 
         QMessageBox::information(this, "Undo Export", "Export has been undone!");
         this->exported = false;
