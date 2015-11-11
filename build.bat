@@ -5,7 +5,7 @@ rem please change according to your setup
 set CWD=%~dp0
 set QT=C:\Qt\5.4\mingw491_32\bin
 set QMAKE=%QT%\qmake.exe
-set MAKE="%PROGRAMFILES(x86)%\GnuWin32\bin\make.exe"
+set MAKE="C:\MinGW\bin\mingw32-make.exe"
 
 if exist bin\win32\kpf-qt.exe goto clean
 
