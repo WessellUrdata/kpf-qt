@@ -134,8 +134,10 @@ void MainWindow::onINIExportClicked()
     {
         INIReader reader;
         reader.open(INI_PATH);
-        if(ui->leKotor->text() != "" || !k1onPlat)
+        QFile *kf = new QFile(QString("%0%1").arg(ui->leKotor->text(), KOTOR_EXE));
+        if(kf->exists())
         {
+            QMessageBox::information(this, "", ui->leKotor->text());
 #ifdef Q_OS_UNIX
             reader.setValue("Installed", "K1_Installed", "0");
             reader.setValue("Paths", "K1_Path", "undef");
@@ -150,7 +152,8 @@ void MainWindow::onINIExportClicked()
             reader.setValue("Paths", "K1_Path", "undef");
         }
 
-        if(ui->leKotor2->text() != "")
+        kf = new QFile(QString("%0%1").arg(ui->leKotor2->text(), KOTOR2_EXE));
+        if(kf->exists())
         {
             reader.setValue("Installed", "K2_Installed", "1");
             reader.setValue("Paths", "K2_Path", ui->leKotor2->text());
@@ -195,6 +198,10 @@ void MainWindow::onINIExportClicked()
                 reader.setValue("Paths", "K2_SavePathCloud", "undef");
             }
         }
+
+        // Last couble of values. We'll leave as null for now
+        reader.setValue("Installed", "TJM_Installed", "0");
+        reader.setValue("Paths", "TJM_Path", "undef");
 
         reader.setValue("Paths", "Steam_Path", steamPath);
         QMessageBox::information(this, "INI Export", QString("Contents successfully exported to %1").arg(INI_PATH));
@@ -252,7 +259,14 @@ void MainWindow::detectPaths(bool rescan)
     {
         this->changed = true;
 #ifdef Q_OS_WIN32
+        // We'll look for CD entries first. Since I only kave KotOR1 on CD, it's the only check for now
         RegistryReader reader;
+        reader.open(KOTOR_CD_REG_KEY_64);
+        if(reader.hasKey("InstallPath"))
+        {
+            ui->leKotor->setText(reader.getValue("InstallPath"));
+        }
+
         reader.open(GOG_64_REG_KEY);
         if(reader.hasGroup("Games"))
             this->gogShit(GOG_64_REG_KEY);
