@@ -1,4 +1,5 @@
 #define AppName "KotOR Savegame Editor"
+#define KPFAppName "KPF"
 #define Version "3.3.7"
 #define Publisher "KSE Team"
 #define PublisherURL "http://deadlystream.com/forum/files/file/503-kotor-save-game-editor/"
@@ -33,9 +34,11 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 [CustomMessages]
 DeadlyStream=KSE on DeadlyStream
 Support=KSE Support Page
+DesktopIcon=Create a desktop icon for %1
 
 [Tasks]
-Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "desktopicon"; Description: "{cm:DesktopIcon,KSE}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "kpficon"; Description: "{cm:DesktopIcon,{#KPFAppName}}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Code]
 // Import the LoadVCLStyle function from VclStylesInno.DLL
@@ -109,7 +112,8 @@ Name: "{group}\{cm:Support}"; Filename: "{#SupportURL}"
 ; =================
 ; Sesion: Desktop Icons
 ; =================
-Name: "{commondesktop}\{#AppName}"; Filename: "{app}\{#ExeName}"
+Name: "{commondesktop}\{#AppName}"; Filename: "{app}\{#ExeName}"; Tasks: desktopicon
+Name: "{commondesktop}\{#KPFAppName}"; Filename: "{app}\kpf-qt.exe"; Tasks: kpficon
 
 [Run]
 Filename: "{app}\{#ExeName}"; Description: "{cm:LaunchProgram,{#StringChange(AppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
