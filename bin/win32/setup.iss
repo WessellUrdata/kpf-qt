@@ -112,7 +112,7 @@ Name: "{group}\{cm:Support}"; Filename: "{#SupportURL}"
 ; =================
 ; Sesion: Desktop Icons
 ; =================
-Name: "{commondesktop}\{#AppName}"; Filename: "{app}\{#ExeName}"; Tasks: desktopicon
+Name: "{commondesktop}\{#AppName}"; Filename: "{app}\{#ExeName}"; Tasks: desktopicon; IconFilename: "{app}\boba.bmp"
 Name: "{commondesktop}\{#KPFAppName}"; Filename: "{app}\kpf-qt.exe"; Tasks: kpficon
 
 [Run]
