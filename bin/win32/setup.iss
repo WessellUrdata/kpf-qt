@@ -96,8 +96,11 @@ Source: "platforms\qwindows.dll"; DestDir: "{app}\platforms"; Flags: ignoreversi
 ; Installer Styles
 ; Change these locations depending on where you have
 ; the styles installed on your machine
-Source: "C:\Program Files (x86)\The Road To Delphi\VCL Styles Inno\VclStylesinno.dll"; DestDir: {#VCLStylesSkinPath};
-Source: "C:\Program Files (x86)\The Road To Delphi\VCL Styles Inno\Styles\Glow.vsf"; DestDir: {#VCLStylesSkinPath};
+Source: "C:\Program Files (x86)\The Road To Delphi\VCL Styles Inno\VclStylesinno.dll"; DestDir: {#VCLStylesSkinPath}; Flags: ignoreversion
+Source: "C:\Program Files (x86)\The Road To Delphi\VCL Styles Inno\Styles\Glow.vsf"; DestDir: {#VCLStylesSkinPath}; Flags: ignoreversion
+
+; Misc files
+Source: "..\..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 ; ================

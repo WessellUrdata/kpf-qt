@@ -26,3 +26,6 @@ HEADERS  += src/mainwindow.h \
 
 FORMS    += src/mainwindow.ui \
     src/aboutdialog.ui
+
+RESOURCES += \
+    src/qdarkstyle.qrc
