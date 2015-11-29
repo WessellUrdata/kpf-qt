@@ -94,6 +94,8 @@ Source: "Qt5Widgets.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "platforms\qwindows.dll"; DestDir: "{app}\platforms"; Flags: ignoreversion
 
 ; Installer Styles
+; Change these locations depending on where you have
+; the styles installed on your machine
 Source: "C:\Program Files (x86)\The Road To Delphi\VCL Styles Inno\VclStylesinno.dll"; DestDir: {#VCLStylesSkinPath};
 Source: "C:\Program Files (x86)\The Road To Delphi\VCL Styles Inno\Styles\Glow.vsf"; DestDir: {#VCLStylesSkinPath};
 
