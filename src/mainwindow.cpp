@@ -137,7 +137,6 @@ void MainWindow::onINIExportClicked()
         QFile *kf = new QFile(QString("%0%1").arg(ui->leKotor->text(), KOTOR_EXE));
         if(kf->exists())
         {
-            QMessageBox::information(this, "", ui->leKotor->text());
 #ifdef Q_OS_UNIX
             reader.setValue("Installed", "K1_Installed", "0");
             reader.setValue("Paths", "K1_Path", "undef");
@@ -178,6 +177,8 @@ void MainWindow::onINIExportClicked()
         // KotOR 2 cloud saves check
         QDir csdir(ui->leKotor2->text() + "/cloudsaves/");
         QStringList dirs = csdir.entryList();
+        reader.setValue("Options", "Use_K2_Cloud", "0");
+        reader.setValue("Paths", "K2_SavePathCloud", "undef");
         for(int i = 0; i < dirs.count(); i++)
         {
             QRegularExpression regex("([0-9]+)");
