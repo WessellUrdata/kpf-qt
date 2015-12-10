@@ -41,8 +41,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->connect(ui->menuExit, SIGNAL(triggered(bool)), this, SLOT(onMenuItemExitClicked()));
     this->connect(ui->menuAbout, SIGNAL(triggered(bool)), this, SLOT(onMenuItemAboutClicked()));
+    this->connect(ui->menuDelete, SIGNAL(triggered(bool)), this, SLOT(onMenuItemDeleteClicked()));
 
     detectPaths(false);
+
+    // Show something happened. Let them know to export shit :p
+    QFile ini(INI_PATH);
+    if(!ini.exists())
+        QMessageBox::information(this, "Paths Found", "KotOR and/or KotOR 2 were automatically detected on your system \
+All you need to do is generate the INI for KSE. Simply click \"Export to INI\" and you're all set to continue running KSE");
 }
 
 MainWindow::~MainWindow()
@@ -60,7 +67,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     if(changed)
     {
-        QMessageBox::StandardButton reply = QMessageBox::information(this, "Unsaved Changes", "Changes have been made in KPF. Are you sure you want to close without saving changes", QMessageBox::Yes | QMessageBox::No);
+        QMessageBox::StandardButton reply = QMessageBox::information(this, "Unsaved Changes", "Changes have been made in KPF. \
+Are you sure you want to close without saving changes", QMessageBox::Yes | QMessageBox::No);
 
         if(reply == QMessageBox::No)
             event->ignore();
@@ -79,47 +87,47 @@ void MainWindow::onQuitClicked()
 
 void MainWindow::onK1BrowseClicked()
 {
-    QFileDialog dlg;
-    dlg.setFileMode(QFileDialog::Directory);
-    dlg.setOption(QFileDialog::ShowDirsOnly);
-    int result = dlg.exec();
-    QString dir;
-    if(result)
+    if(this->browse(ui->leKotor->text(), KOTOR_EXE))
     {
-        dir = dlg.selectedFiles()[0];
-        QFile file(dir + KOTOR_EXE); //Win32 only. Not yet working on Mac. This'll be a bit different. We'll see
-        if(file.exists())
-        {
-#ifdef Q_OS_WIN32
-            dir.replace("/", "\\");
-#endif
-            ui->leKotor->setText(dir);
-        }
-        else
-            QMessageBox::critical(this, "Invalid Path", "swkotor.exe was not found in this directory. Please try again", QMessageBox::Ok);
+        ui->leKotor->setText(tempPath);
     }
+    else
+        QMessageBox::critical(this, "Invalid Path", "The kotor's game executable could not be found! Is this the game's root directory?");
 }
 
 void MainWindow::onK2BrowseClicked()
 {
+    if(this->browse(ui->leKotor2->text(), KOTOR2_EXE))
+    {
+        ui->leKotor2->setText(tempPath);
+    }
+    else
+        QMessageBox::critical(this, "Invalid Path", "The kotor's game executable could not be found! Is this the game's root directory?");
+}
+
+bool MainWindow::browse(QString location, const char *exe)
+{
     QFileDialog dlg;
     dlg.setFileMode(QFileDialog::Directory);
     dlg.setOption(QFileDialog::ShowDirsOnly);
+    if(location != "")
+        dlg.setDirectory(location);
     int result = dlg.exec();
     QString dir;
     if(result)
     {
         dir = dlg.selectedFiles()[0];
-        QFile file(dir + KOTOR2_EXE);
+        QFile file(dir + exe);
         if(file.exists())
         {
 #ifdef Q_OS_WIN32
             dir.replace("/", "\\");
 #endif
-            ui->leKotor2->setText(dir);
+            tempPath = QString(dir);
+            return true;
         }
         else
-            QMessageBox::critical(this, "Invalid Path", "swkotor2.exe was not found in this directory. Please try again");
+            return false;
     }
 }
 
@@ -263,9 +271,9 @@ void MainWindow::detectPaths(bool rescan)
         // We'll look for CD entries first. Since I only kave KotOR1 on CD, it's the only check for now
         RegistryReader reader;
         reader.open(KOTOR_CD_REG_KEY_64);
-        if(reader.hasKey("InstallPath"))
+        if(reader.hasKey("Path"))
         {
-            ui->leKotor->setText(reader.getValue("InstallPath"));
+            ui->leKotor->setText(reader.getValue("Path"));
         }
 
         reader.open(GOG_64_REG_KEY);
@@ -406,6 +414,19 @@ void MainWindow::onMenuItemAboutClicked()
 {
     AboutDialog *dlg = new AboutDialog();
     dlg->show();
+}
+
+void MainWindow::onMenuItemDeleteClicked()
+{
+    QFile ini(INI_PATH);
+    if(ini.exists())
+    {
+        ini.remove();
+        QMessageBox::information(this, "INI Removal Successfull", "kse.ini has been successfully removed!");
+    }
+    else
+        QMessageBox::information(this, "INI Removal Failed", "kse.ini does not exist, and therefore cannot be deleted. \
+Did you really think you could get away with that?");
 }
 
 void MainWindow::onUndoClicked()

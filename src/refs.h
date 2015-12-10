@@ -19,7 +19,7 @@
 #define DEFAULT_STEAM_PATH "C:\\Program Files (x86)\\Steam"
 #define STEAM_EXE "/steam.exe"
 #define INI_BACKUP QString("%1/AppData/Local/Temp/kse.ini.bak").arg(QDir::homePath())
-#define INI_PATH "kse.ini"
+#define INI_PATH QString("%1/AppData/Local/KSE/kse.ini").arg(QDir::homePath())
 #else
 #define KOTOR_EXE "/swkotor"
 #define KOTOR2_EXE "/KOTOR2"
@@ -34,10 +34,10 @@
 #define STEAM_REG_KEY "HKEY_CURRENT_USER\\SOFTWARE\\Valve\\Steam"
 #define GOG_32_REG_KEY "HKEY_LOCAL_MACHINE\\SOFTWARE\\GOG.com"
 #define GOG_64_REG_KEY "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\GOG.com"
-#define KOTOR_CD_REG_KEY_32 "HKEY_LOCAL_MACHINE\\SOFTWARE\\BioWare\\sw\\KOTOR\\1.0"
-#define KOTOR_CD_REG_KEY_64 "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\BioWare\\sw\\KOTOR\\1.0"
-#define KOTOR2_CD_REG_KEY_32 ""
-#define KOTOR2_CD_REG_KEY_64 ""
+#define KOTOR_CD_REG_KEY_32 "HKEY_LOCAL_MACHINE\\SOFTWARE\\BioWare\\sw\\KOTOR"
+#define KOTOR_CD_REG_KEY_64 "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\BioWare\\sw\\KOTOR"
+#define KOTOR2_CD_REG_KEY_32 "HKEY_LOCAL_MACHINE\\SOFTWARE\\Lucasarts\\KOTOR2"
+#define KOTOR2_CD_REG_KEY_64 "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432node\\Lucasarts\\KOTOR2"
 #endif
 
 // The following 2 statements are used to determine

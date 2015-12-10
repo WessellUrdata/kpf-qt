@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/styles">
+        <file>qdarkstyle.css</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file>fett.ico</file>
+    </qresource>
+</RCC>

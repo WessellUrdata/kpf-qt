@@ -108,6 +108,7 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <addaction name="menuDelete"/>
     <addaction name="menuExit"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -127,6 +128,11 @@
   <action name="menuAbout">
    <property name="text">
     <string>&amp;About</string>
+   </property>
+  </action>
+  <action name="menuDelete">
+   <property name="text">
+    <string>&amp;Delete INI</string>
    </property>
   </action>
  </widget>

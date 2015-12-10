@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
 
-    QFile f(":qdarkstyle/qdarkstyle.css");
+    QFile f(":styles/qdarkstyle.css");
     if(f.exists())
     {
         f.open(QFile::ReadOnly | QFile::Text);

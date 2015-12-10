@@ -1,9 +1,3 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2015-10-26T17:22:23
-#
-#-------------------------------------------------
-
 QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -11,6 +5,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = kpf-qt
 TEMPLATE = app
 
+RC_FILE += src/resource.rc
 
 SOURCES += src/main.cpp \
     src/mainwindow.cpp \
@@ -22,10 +17,10 @@ HEADERS  += src/mainwindow.h \
     src/inireader.h \
     src/registryreader.h \
     src/refs.h \
-    src/aboutdialog.h
+    src/aboutdialog.h \
+    src/version.h
 
 FORMS    += src/mainwindow.ui \
     src/aboutdialog.ui
 
-RESOURCES += \
-    src/qdarkstyle.qrc
+RESOURCES += src/qt_resource.qrc

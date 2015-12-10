@@ -1,13 +1,32 @@
 @echo off
+title KPF Build Tool
+color 0A
 
 rem build env. applications
 rem please change according to your setup
 set CWD=%~dp0
 set QT=C:\Qt\5.5\mingw492_32\bin
+set MINGW=C:\MinGW\bin
 set QMAKE=%QT%\qmake.exe
-set MAKE="C:\MinGW\bin\mingw32-make.exe"
+set MAKE=%MINGW%\mingw32-make.exe
+set PATH=%MINGW%;%QT%;%PATH%
 
 if exist bin\win32\kpf-qt.exe goto clean
+
+rem Just in case you wanna run a certain
+rem event manually, use one of the cmd args
+rem -b force build
+rem -c force clean
+
+if "%1" NEQ "" (
+	if "%1" EQU "-b" (
+		goto build
+	) else if "%1" EQU "-c" (
+		goto clean
+	) else (
+		goto error
+	)
+)
 
 :build
 set /p j="How many threads do you want running for compilation? "
@@ -32,8 +51,7 @@ copy /Y "%QT%\libwinpthread-1.dll" "bin\win32\libwinpthread-1.dll"
 copy /Y %QT%\..\plugins\platforms\qwindows.dll bin\win32\platforms\qwindows.dll
 echo.
 echo Build complete!
-pause
-exit
+goto finish
 
 :clean
 echo.
@@ -58,7 +76,15 @@ if exist release rmdir /S /Q release
 if exist Makefile del Makefile
 if exist Makefile.Debug del Makefile.Debug
 if exist Makefile.Release del Makefile.Release
+cd ..
 echo.
 echo Cleaning complete
+goto finish
+
+:error
+echo.
+echo Error: "%1" is an invalid command switch!
+echo.
+
+:finish
 pause
-exit

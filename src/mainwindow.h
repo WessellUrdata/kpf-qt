@@ -36,21 +36,25 @@ public slots:
 
     void onMenuItemExitClicked();
     void onMenuItemAboutClicked();
+    void onMenuItemDeleteClicked();
 
     void onTextChanged(QString);
 
 private:
     Ui::MainWindow *ui;
-    void closeEvent(QCloseEvent *event);
+    void closeEvent(QCloseEvent *);
     void loadINI();
-    void detectPaths(bool rescan);
+    void detectPaths(bool);
     void steamShit();
-    void gogShit(QString gogKey);
+    void gogShit(QString);
+    bool browse(QString location, const char *);
 
     QString steamPath;
     bool k1onPlat;
     bool exported;
     bool changed;
+
+    QString tempPath;
 };
 
 #endif // MAINWINDOW_H
