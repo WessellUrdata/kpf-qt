@@ -28,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Keyboard shortcuts
     ui->menuExit->setShortcut(Qt::CTRL | Qt::Key_Q);
     ui->menuAbout->setShortcut(Qt::Key_F1);
+    ui->menuOpen->setShortcut(Qt::CTRL | Qt::Key_O);
 
     this->connect(ui->bQuit, SIGNAL(clicked(bool)), this, SLOT(onQuitClicked()));
     this->connect(ui->bK1Browse, SIGNAL(clicked(bool)), this, SLOT(onK1BrowseClicked()));
@@ -42,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->connect(ui->menuExit, SIGNAL(triggered(bool)), this, SLOT(onMenuItemExitClicked()));
     this->connect(ui->menuAbout, SIGNAL(triggered(bool)), this, SLOT(onMenuItemAboutClicked()));
     this->connect(ui->menuDelete, SIGNAL(triggered(bool)), this, SLOT(onMenuItemDeleteClicked()));
+    this->connect(ui->menuOpen, SIGNAL(triggered(bool)), this, SLOT(onMenuItemOpenClicked()));
 
     detectPaths(false);
 
@@ -425,8 +427,12 @@ void MainWindow::onMenuItemDeleteClicked()
         QMessageBox::information(this, "INI Removal Successfull", "kse.ini has been successfully removed!");
     }
     else
-        QMessageBox::information(this, "INI Removal Failed", "kse.ini does not exist, and therefore cannot be deleted. \
-Did you really think you could get away with that?");
+        QMessageBox::information(this, "INI Removal Failed", "kse.ini does not exist, and therefore cannot be deleted. Did you really think you could get away with that?");
+}
+
+void MainWindow::onMenuItemOpenClicked()
+{
+    QDesktopServices::openUrl(QString(INI_PATH));
 }
 
 void MainWindow::onUndoClicked()

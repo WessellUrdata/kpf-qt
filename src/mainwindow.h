@@ -8,6 +8,7 @@
 #include <QTextStream>
 #include <QCloseEvent>
 #include <QDesktopWidget>
+#include <QDesktopServices>
 
 #include "refs.h"
 #include "inireader.h"
@@ -37,6 +38,7 @@ public slots:
     void onMenuItemExitClicked();
     void onMenuItemAboutClicked();
     void onMenuItemDeleteClicked();
+    void onMenuItemOpenClicked();
 
     void onTextChanged(QString);
 

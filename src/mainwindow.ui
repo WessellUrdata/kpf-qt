@@ -108,6 +108,7 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <addaction name="menuOpen"/>
     <addaction name="menuDelete"/>
     <addaction name="menuExit"/>
    </widget>
@@ -133,6 +134,11 @@
   <action name="menuDelete">
    <property name="text">
     <string>&amp;Delete INI</string>
+   </property>
+  </action>
+  <action name="menuOpen">
+   <property name="text">
+    <string>&amp;Open INI File</string>
    </property>
   </action>
  </widget>
