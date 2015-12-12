@@ -42,19 +42,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->connect(ui->menuExit, SIGNAL(triggered(bool)), this, SLOT(onMenuItemExitClicked()));
     this->connect(ui->menuAbout, SIGNAL(triggered(bool)), this, SLOT(onMenuItemAboutClicked()));
-    
-#ifdef Q_OS_WIN32
     this->connect(ui->menuDelete, SIGNAL(triggered(bool)), this, SLOT(onMenuItemDeleteClicked()));
-#endif
+
     
     this->connect(ui->menuOpen, SIGNAL(triggered(bool)), this, SLOT(onMenuItemOpenClicked()));
-    
-    /*
-     * onMenuItemDeleteClicked() has a major bug on Linux
-     * Where it will destroy your linux system. It has been removed
-     * On linux for now until it's fixed. If you're on Linux, the menuAbout
-     * option will not work, because of this. It's disabled for safety reasons
-     */
 
     detectPaths(false);
 
@@ -439,8 +430,12 @@ void MainWindow::onMenuItemDeleteClicked()
                                      QMessageBox::Yes | QMessageBox::No);
         if(reply == QMessageBox::Yes)
         {
+#ifdef Q_OS_WIN32
             QDir dir(QString(INI_PATH).replace("kse.ini", ""));
             dir.removeRecursively();
+#else
+            ini.remove();
+#endif
 
             QMessageBox::information(this, "INI Removal Successfull", "kse.ini has been successfully removed!");
         }
