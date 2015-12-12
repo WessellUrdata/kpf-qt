@@ -42,7 +42,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->connect(ui->menuExit, SIGNAL(triggered(bool)), this, SLOT(onMenuItemExitClicked()));
     this->connect(ui->menuAbout, SIGNAL(triggered(bool)), this, SLOT(onMenuItemAboutClicked()));
-    this->connect(ui->menuDelete, SIGNAL(triggered(bool)), this, SLOT(onMenuItemDeleteClicked()));
+//    this->connect(ui->menuDelete, SIGNAL(triggered(bool)), this, SLOT(onMenuItemDeleteClicked()));
+
+    // Temporary.
+    this->connect(ui->menuDelete, SIGNAL(triggered(bool)), this, SLOT(onTempMenuItemClicked()));
 
     
     this->connect(ui->menuOpen, SIGNAL(triggered(bool)), this, SLOT(onMenuItemOpenClicked()));
@@ -54,6 +57,13 @@ MainWindow::MainWindow(QWidget *parent) :
     if(!ini.exists())
         QMessageBox::information(this, "Paths Found", "KotOR and/or KotOR 2 were automatically detected on your system \
 All you need to do is generate the INI for KSE. Simply click \"Export to INI\" and you're all set to continue running KSE");
+}
+
+void MainWindow::onTempMenuItemClicked()
+{
+    QMessageBox::information(this, "Temprarily Disabled",
+                             "Thanks for checking out this feature to KPF. Currently, this option is disabled for support reasons. This option will \
+be re-enabled once KSE is updated. But for now, it will stay this way. Thanks for trying out KPF Qt, and I hope it works well for you. :)");
 }
 
 MainWindow::~MainWindow()

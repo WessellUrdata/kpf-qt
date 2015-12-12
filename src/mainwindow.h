@@ -40,6 +40,8 @@ public slots:
     void onMenuItemDeleteClicked();
     void onMenuItemOpenClicked();
 
+    void onTempMenuItemClicked();
+
     void onTextChanged(QString);
 
 private:

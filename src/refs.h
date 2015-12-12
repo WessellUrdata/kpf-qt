@@ -19,7 +19,8 @@
 #define DEFAULT_STEAM_PATH "C:\\Program Files (x86)\\Steam"
 #define STEAM_EXE "/steam.exe"
 #define INI_BACKUP QString("%1/AppData/Local/Temp/kse.ini.bak").arg(QDir::homePath())
-#define INI_PATH QString("%1/AppData/Local/KSE/kse.ini").arg(QDir::homePath())
+//#define INI_PATH QString("%1/AppData/Local/KSE/kse.ini").arg(QDir::homePath())
+#define INI_PATH QString("kse.ini")
 #else
 #define KOTOR_EXE "/swkotor"
 #define KOTOR2_EXE "/KOTOR2"
