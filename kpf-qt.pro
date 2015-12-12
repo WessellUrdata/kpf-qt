@@ -5,7 +5,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = kpf-qt
 TEMPLATE = app
 
-RC_FILE += src/resource.rc
+RC_FILE += src/res/resource.rc
 
 SOURCES += src/main.cpp \
     src/mainwindow.cpp \

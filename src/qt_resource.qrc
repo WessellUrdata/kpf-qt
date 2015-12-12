@@ -1,8 +1,11 @@
 <RCC>
     <qresource prefix="/styles">
-        <file>qdarkstyle.css</file>
+        <file>res/stylesheets/qdarkstyle.css</file>
     </qresource>
     <qresource prefix="/icons">
-        <file>fett.ico</file>
+        <file>res/images/fett.ico</file>
+    </qresource>
+    <qresource prefix="/images">
+        <file>res/images/boba_about.png</file>
     </qresource>
 </RCC>

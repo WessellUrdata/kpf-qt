@@ -128,9 +128,9 @@ bool MainWindow::browse(QString location, const char *exe)
             tempPath = QString(dir);
             return true;
         }
-        else
-            return false;
     }
+
+    return false;
 }
 
 void MainWindow::onINIExportClicked()
@@ -423,8 +423,16 @@ void MainWindow::onMenuItemDeleteClicked()
     QFile ini(INI_PATH);
     if(ini.exists())
     {
-        ini.remove();
-        QMessageBox::information(this, "INI Removal Successfull", "kse.ini has been successfully removed!");
+        QMessageBox::StandardButton reply =
+               QMessageBox::question(this, "Confirmation", "Are you sure you wish to remove kse.ini? You'll have to regenerate it if you need to use KSE again.",
+                                     QMessageBox::Yes | QMessageBox::No);
+        if(reply == QMessageBox::Yes)
+        {
+            QDir dir(QString(INI_PATH).replace("kse.ini", ""));
+            dir.removeRecursively();
+
+            QMessageBox::information(this, "INI Removal Successfull", "kse.ini has been successfully removed!");
+        }
     }
     else
         QMessageBox::information(this, "INI Removal Failed", "kse.ini does not exist, and therefore cannot be deleted. Did you really think you could get away with that?");
@@ -432,7 +440,11 @@ void MainWindow::onMenuItemDeleteClicked()
 
 void MainWindow::onMenuItemOpenClicked()
 {
-    QDesktopServices::openUrl(QString(INI_PATH));
+    QFile ini(INI_PATH);
+    if(ini.exists())
+        QDesktopServices::openUrl(QString(INI_PATH));
+    else
+        QMessageBox::critical(this, "INI Not Found", "kse.ini was not found on your system. Are you sure it exists?");
 }
 
 void MainWindow::onUndoClicked()

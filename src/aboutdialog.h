@@ -2,6 +2,8 @@
 #define ABOUTDIALOG_H
 
 #include <QDialog>
+#include <QDesktopServices>
+#include <QUrl>
 
 namespace Ui {
 class AboutDialog;
@@ -17,6 +19,7 @@ public:
 
 public slots:
     void onCloseClick();
+    void onWebsiteClick();
 
 private:
     Ui::AboutDialog *ui;
