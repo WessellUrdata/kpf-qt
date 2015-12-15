@@ -450,7 +450,7 @@ void MainWindow::onMenuItemOpenClicked()
     if(ini.exists())
         QDesktopServices::openUrl(QString(INI_PATH));
     else
-        QMessageBox::critical(this, "INI Not Found", "kse.ini was not found on your system. Are you sure it exists?");
+        QMessageBox::critical(this, "INI Not Found", QString("%1 was not found on your system. Are you sure it exists?").arg(INI_PATH));
 }
 
 void MainWindow::onUndoClicked()
