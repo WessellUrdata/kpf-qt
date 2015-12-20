@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>KPF: KSE PathFinder</string>
+   <string>KPF: KSE PathFinder (Support Build)</string>
   </property>
   <property name="styleSheet">
    <string notr="true"/>
