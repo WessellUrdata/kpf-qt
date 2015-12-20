@@ -14,6 +14,7 @@
 #include "inireader.h"
 #include "registryreader.h"
 #include "aboutdialog.h"
+#include "logger.h"
 
 namespace Ui {
 class MainWindow;
@@ -57,6 +58,7 @@ private:
     bool changed;
 
     QString tempPath;
+    Logger *logger;
 };
 
 #endif // MAINWINDOW_H

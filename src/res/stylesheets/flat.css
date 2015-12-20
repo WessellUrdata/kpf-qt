@@ -1,0 +1,68 @@
+QWidget {
+    font-size: 13px;
+    font-weight: 300;
+    color: #2C3E50;
+    background-color: white;
+}
+QPushButton
+{
+    border: none;
+    border-radius: 2px;
+    outline: 0;
+    padding: 0 2rem;
+    text-transform: uppercase;
+    vertical-align: middle;
+    text-decoration: none;
+    color: #fff;
+    background-color: #16ac8e;
+    border: 1px solid #16ac8e;
+    text-align: center;
+    padding: 5px 20px;
+}
+QPushButton:hover {
+    background-color: #128F76;
+    border-color: #11866F;
+}
+QPushButton:focus {
+    background-color: #0E6F5C;
+    border-color: #0A4B3E;
+}
+QLineEdit {
+    background-color: transparent;
+    border: 1px solid #c3d1df;
+    border-radius: 4px;
+    color: #2C3E50;
+    padding: 4px;
+}
+QLineEdit:focus {
+    border-color: #2C3E50;
+    border-width: 1px;
+}
+QMenuBar {
+    background-color: #2C3E50;
+    color: white;
+    font-size: 12px;
+    font-weight: 400;
+}
+QMenuBar::item
+{
+    background: transparent;
+}
+QMenuBar::item::selected {
+    color: #149C82;
+}
+QMenu
+{
+    color: #3E3F3A;
+    margin: 2px;
+    border-radius: 0 0 4px 4px;
+}
+QMenu::item {
+    padding: 5px 30px 5px 30px;
+    margin-left: 5px;
+}
+QMenu::item:selected
+{
+    color: white;
+    background-color: #2C3E50;
+}

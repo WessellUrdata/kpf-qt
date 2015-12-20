@@ -7,6 +7,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+//    this->logger = new Logger(this);
+
     // Center window on screen
     QRect pos = frameGeometry();
     pos.moveCenter(QDesktopWidget().availableGeometry().center());

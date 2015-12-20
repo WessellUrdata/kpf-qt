@@ -1,0 +1,12 @@
+INPUT(
+./release\main.o
+./release\mainwindow.o
+./release\inireader.o
+./release\registryreader.o
+./release\aboutdialog.o
+./release\logger.o
+./release\qrc_qt_resource.o
+./release\moc_mainwindow.o
+./release\moc_aboutdialog.o
+./release\moc_logger.o
+);

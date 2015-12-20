@@ -11,14 +11,16 @@ SOURCES += src/main.cpp \
     src/mainwindow.cpp \
     src/inireader.cpp \
     src/registryreader.cpp \
-    src/aboutdialog.cpp
+    src/aboutdialog.cpp \
+    src/logger.cpp
 
 HEADERS  += src/mainwindow.h \
     src/inireader.h \
     src/registryreader.h \
     src/refs.h \
     src/aboutdialog.h \
-    src/version.h
+    src/version.h \
+    src/logger.h
 
 FORMS    += src/mainwindow.ui \
     src/aboutdialog.ui
