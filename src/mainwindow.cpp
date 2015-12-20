@@ -66,9 +66,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::onTempMenuItemClicked()
 {
-    QMessageBox::information(this, "Temprarily Disabled",
-                             "Thanks for checking out this feature to KPF. Currently, this option is disabled for support reasons. This option will \
-be re-enabled once KSE is updated. But for now, it will stay this way. Thanks for trying out KPF Qt, and I hope it works well for you. :)");
+    MsgBox msg(this, "Temprarily Disabled", QString("Thanks for checking out this feature to KPF. Currently, this option is disabled for support reasons. This option will ")
+               + "be re-enabled once KSE is updated. But for now, it will stay this way. Thanks for trying out KPF Qt, and I hope it works well for you. :)", MsgBox::Ok);
+    msg.exec();
 }
 
 MainWindow::~MainWindow()
