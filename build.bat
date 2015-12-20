@@ -71,6 +71,8 @@ if exist platforms\qwindows.dll del platforms\qwindows.dll
 if exist kse.ini del kse.ini
 cd "%CWD%\src"
 %MAKE% clean
+if exist object_script.kpf-qt.Debug del object_script.kpf-qt.Debug
+if exist object_script.kpf-qt.Release del object_script.kpf-qt.Release
 if exist debug rmdir /S /Q debug
 if exist release rmdir /S /Q release
 if exist Makefile del Makefile

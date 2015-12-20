@@ -3,7 +3,6 @@
 
 #include <QMainWindow>
 #include <QFileDialog>
-#include <QMessageBox>
 #include <QRegularExpression>
 #include <QTextStream>
 #include <QCloseEvent>
@@ -14,6 +13,8 @@
 #include "inireader.h"
 #include "registryreader.h"
 #include "aboutdialog.h"
+#include "logger.h"
+#include "msgbox.h"
 
 namespace Ui {
 class MainWindow;
@@ -59,6 +60,7 @@ private:
     bool changed;
 
     QString tempPath;
+    Logger *logger;
 };
 
 #endif // MAINWINDOW_H

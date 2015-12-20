@@ -12,6 +12,7 @@ if [ -e "bin/linux/kpf-qt" ] ; then
     cd $CWD/src
     make clean
     rm -rf Makefile
+    rm -rf kpf-qt
 else
     # compile binaries
     qmake kpf-qt.pro -o src/Makefile
