@@ -3,7 +3,6 @@
 
 #include <QMainWindow>
 #include <QFileDialog>
-#include <QMessageBox>
 #include <QRegularExpression>
 #include <QTextStream>
 #include <QCloseEvent>
@@ -15,6 +14,7 @@
 #include "registryreader.h"
 #include "aboutdialog.h"
 #include "logger.h"
+#include "msgbox.h"
 
 namespace Ui {
 class MainWindow;

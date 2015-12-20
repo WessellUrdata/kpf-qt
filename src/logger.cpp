@@ -1,10 +1,8 @@
 #include "logger.h"
 
-#include <QMessageBox>
-
 Logger::Logger(QObject *parent) : QObject(parent)
 {
-    QMessageBox::information(0, "", parent->objectName());
+
 }
 
 void Logger::write(QString line)

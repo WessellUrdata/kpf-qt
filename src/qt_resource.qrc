@@ -7,6 +7,9 @@
     </qresource>
     <qresource prefix="/images">
         <file>res/images/boba_about.png</file>
+        <file>res/images/critical.png</file>
+        <file>res/images/info.png</file>
+        <file>res/images/question.png</file>
     </qresource>
     <qresource prefix="/fonts">
         <file>res/fonts/ubuntu.ttf</file>

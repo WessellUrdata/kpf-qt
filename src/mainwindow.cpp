@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-//    this->logger = new Logger(this);
+    this->logger = new Logger(this);
 
     // Center window on screen
     QRect pos = frameGeometry();
@@ -54,8 +54,11 @@ MainWindow::MainWindow(QWidget *parent) :
     // Show something happened. Let them know to export shit :p
     QFile ini(INI_PATH);
     if(!ini.exists())
-        QMessageBox::information(this, "Paths Found", "KotOR and/or KotOR 2 were automatically detected on your system \
-All you need to do is generate the INI for KSE. Simply click \"Export to INI\" and you're all set to continue running KSE");
+    {
+        MsgBox msg(this, "Paths Found", "KotOR and/or KotOR 2 were automatically detected on your system. All you need to do is generate the INI for KSE. Simply click \"Export to INI\" and you're all set to continue running KSE",
+                   MsgBox::Ok);
+        msg.exec();
+    }
 }
 
 MainWindow::~MainWindow()
@@ -73,10 +76,10 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     if(changed)
     {
-        QMessageBox::StandardButton reply = QMessageBox::information(this, "Unsaved Changes", "Changes have been made in KPF. \
-Are you sure you want to close without saving changes", QMessageBox::Yes | QMessageBox::No);
-
-        if(reply == QMessageBox::No)
+        MsgBox msg(this, "Unsaved Changes",
+                   "Changes have been made in KPF. Are you sure you want to close without saving changes",
+                   MsgBox::YesNo, "question");
+        if(msg.exec() == MsgBox::No)
             event->ignore();
     }
 
@@ -98,7 +101,10 @@ void MainWindow::onK1BrowseClicked()
         ui->leKotor->setText(tempPath);
     }
     else
-        QMessageBox::critical(this, "Invalid Path", "The kotor's game executable could not be found! Is this the game's root directory?");
+    {
+        MsgBox msg(this, "Invalid Path", "The kotor game executable could not be found! Is this the game's root directory?", MsgBox::Ok, "critical");
+        msg.exec();
+    }
 }
 
 void MainWindow::onK2BrowseClicked()
@@ -108,7 +114,10 @@ void MainWindow::onK2BrowseClicked()
         ui->leKotor2->setText(tempPath);
     }
     else
-        QMessageBox::critical(this, "Invalid Path", "The kotor's game executable could not be found! Is this the game's root directory?");
+    {
+        MsgBox msg(this, "Invalid Path", "The kotor2 game executable could not be found! Is this the game's root directory?", MsgBox::Ok, "critical");
+        msg.exec();
+    }
 }
 
 bool MainWindow::browse(QString location, const char *exe)
@@ -219,23 +228,26 @@ void MainWindow::onINIExportClicked()
         reader.setValue("Paths", "TJM_Path", "undef");
 
         reader.setValue("Paths", "Steam_Path", steamPath);
-        QMessageBox::information(this, "INI Export", QString("Contents successfully exported to %1").arg(INI_PATH));
+        MsgBox msg(this, "INI Export", QString("Contents successfully exported to %1").arg(INI_PATH), MsgBox::Ok);
+        msg.exec();
 
         this->exported = true;
         this->changed = false;
     }
     catch(...)
     {
-        QMessageBox::critical(this, "INI Export Error", "Error exporting values to kse.ini. Please try again later");
+        MsgBox msg(this, "INI Export Error", "Error exporting values to kse.ini. Please try again later", MsgBox::Ok);
+        msg.exec();
     }
 }
 
 void MainWindow::onRescanClicked()
 {
     detectPaths(true);
-    QMessageBox::information(this, "Rescan Complete", QString(
-                                 "Rescaning has completed. You should now see your paths in the main window. ")
-                                 + "If you do not, they could not be obtained automatically. Please add them manually");
+    MsgBox msg(this, "Rescan Complete", QString(
+                   "Rescaning has completed. You should now see your paths in the main window. ")
+                   + "If you do not, they could not be obtained automatically. Please add them manually", MsgBox::Ok);
+    msg.exec();
 }
 
 void MainWindow::loadINI()
@@ -317,7 +329,8 @@ void MainWindow::steamShit()
         if(reader.getValue("SteamPath") != "")
             steamPath = reader.getValue("SteamPath").replace("/", "\\");
 #else
-        QMessageBox::critical(this, "Error", "Default Steam Path was not found, closing. (This will be fixed later...");
+        MsgBox msg(this, "Error", "Default Steam Path was not found, closing. (This will be fixed later...", MsgBox::Ok);
+        msg.exec();
 #endif
     }
 
@@ -424,13 +437,13 @@ void MainWindow::onMenuItemAboutClicked()
 
 void MainWindow::onMenuItemDeleteClicked()
 {
+    MsgBox msg;
     QFile ini(INI_PATH);
     if(ini.exists())
     {
-        QMessageBox::StandardButton reply =
-               QMessageBox::question(this, "Confirmation", "Are you sure you wish to remove kse.ini? You'll have to regenerate it if you need to use KSE again.",
-                                     QMessageBox::Yes | QMessageBox::No);
-        if(reply == QMessageBox::Yes)
+        msg = MsgBox(this, "Confirmation", "Are you sure you wish to remove kse.ini? You'll have to regenerate it if you need to use KSE again.", MsgBox::YesNo);
+        msg.setIcon("question");
+        if(msg.exec() == MsgBox::Yes)
         {
 #ifdef Q_OS_WIN32
             QDir dir(QString(INI_PATH).replace("kse.ini", ""));
@@ -438,12 +451,15 @@ void MainWindow::onMenuItemDeleteClicked()
 #else
             ini.remove();
 #endif
-
-            QMessageBox::information(this, "INI Removal Successfull", "kse.ini has been successfully removed!");
+            msg = MsgBox(this, "INI Removal Successfull", "kse.ini has been successfully removed!", MsgBox::Ok);
+            msg.exec();
         }
     }
     else
-        QMessageBox::information(this, "INI Removal Failed", "kse.ini does not exist, and therefore cannot be deleted. Did you really think you could get away with that?");
+    {
+        msg = MsgBox(this, "INI Removal Failed", "kse.ini does not exist, and therefore cannot be deleted. Did you really think you could get away with that?", MsgBox::Ok);
+        msg.exec();
+    }
 }
 
 void MainWindow::onMenuItemOpenClicked()
@@ -452,7 +468,10 @@ void MainWindow::onMenuItemOpenClicked()
     if(ini.exists())
         QDesktopServices::openUrl(QString(INI_PATH));
     else
-        QMessageBox::critical(this, "INI Not Found", QString("%1 was not found on your system. Are you sure it exists?").arg(INI_PATH));
+    {
+        MsgBox msg(this, "INI Not Found", QString("%1 was not found on your system. Are you sure it exists?").arg(INI_PATH), MsgBox::Ok, "critical");
+        msg.exec();
+    }
 }
 
 void MainWindow::onUndoClicked()
@@ -471,9 +490,13 @@ void MainWindow::onUndoClicked()
         else
             QFile::remove(INI_PATH);
 
-        QMessageBox::information(this, "Undo Export", "Export has been undone!");
+        MsgBox msg(this, "Undo Export", "Export has been undone!", MsgBox::Ok);
+        msg.exec();
         this->exported = false;
     }
     else
-        QMessageBox::critical(this, "Undo Export", "Could not undo export. No changes were made");
+    {
+        MsgBox msg(this, "Undo Export", "Could not undo export. No changes were made", MsgBox::Ok);
+        msg.exec();
+    }
 }
