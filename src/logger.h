@@ -2,6 +2,10 @@
 #define LOGGER_H
 
 #include <QObject>
+#include <QDateTime>
+#include <QFile>
+#include <QTextStream>
+#include <QDir>
 
 class Logger : public QObject
 {
@@ -12,6 +16,8 @@ public:
     void save();
 
 private:
+    QString m_LogFilename;
+    QString m_LogContents;
 };
 
 #endif // LOGGER_H

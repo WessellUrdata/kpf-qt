@@ -13,7 +13,8 @@ SOURCES += src/main.cpp \
     src/registryreader.cpp \
     src/aboutdialog.cpp \
     src/logger.cpp \
-    src/msgbox.cpp
+    src/msgbox.cpp \
+    src/loggerconsole.cpp
 
 HEADERS  += src/mainwindow.h \
     src/inireader.h \
@@ -22,9 +23,11 @@ HEADERS  += src/mainwindow.h \
     src/aboutdialog.h \
     src/version.h \
     src/logger.h \
-    src/msgbox.h
+    src/msgbox.h \
+    src/loggerconsole.h
 
 FORMS    += src/mainwindow.ui \
-    src/aboutdialog.ui
+    src/aboutdialog.ui \
+    src/loggerconsole.ui
 
 RESOURCES += src/qt_resource.qrc
