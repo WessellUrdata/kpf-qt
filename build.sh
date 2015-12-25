@@ -5,17 +5,17 @@
 
 CWD=$(pwd)
 
-if [ -e "bin/linux/kpf-qt" ] ; then
+if [ -e "bin/linux/KPF" ] ; then
     # clean binaries
     cd bin/linux
-    rm -rf kpf-qt
+    rm -rf KPF
     cd $CWD/src
     make clean
     rm -rf Makefile
-    rm -rf kpf-qt
+    rm -rf KPF
 else
     # compile binaries
     qmake kpf-qt.pro -o src/Makefile
     make -C src
-    cp src/kpf-qt bin/linux/kpf-qt
+    cp src/KPF bin/linux/KPF
 fi
