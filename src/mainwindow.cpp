@@ -424,7 +424,6 @@ void MainWindow::steamShit()
                     if((k && kk) ||
                             (k || kk))
                     {
-                        this->logger->write("Scan complete");
                         break;
                     }
                 }
