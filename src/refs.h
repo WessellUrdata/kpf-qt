@@ -12,7 +12,7 @@
 #define KOTOR_PATH "/steamapps/common/swkotor"
 #define KOTOR2_PATH "/steamapps/common/Knights of the Old Republic II"
 
-//#define SUPPORT // uncomment for branch: kse-337a-support
+#define SUPPORT // uncomment for branch: kse-337a-support
 
 #ifdef Q_OS_WIN32
 #define KOTOR_EXE "/swkotor.exe"
@@ -21,6 +21,7 @@
 #define DEFAULT_STEAM_PATH "C:\\Program Files (x86)\\Steam"
 #define STEAM_EXE "/steam.exe"
 #define INI_BACKUP QString("%1/AppData/Local/Temp/kse.ini.bak").arg(QDir::homePath())
+#define VSTORE QString("%1/AppData/Local/VirtualStore/").arg(QDir::homePath())
 #ifndef SUPPORT
 #define INI_PATH QString("%1/AppData/Local/KSE/kse.ini").arg(QDir::homePath())
 #else

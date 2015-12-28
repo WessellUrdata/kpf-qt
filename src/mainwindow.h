@@ -8,6 +8,7 @@
 #include <QCloseEvent>
 #include <QDesktopWidget>
 #include <QDesktopServices>
+#include <QDirIterator>
 
 #include "refs.h"
 #include "inireader.h"

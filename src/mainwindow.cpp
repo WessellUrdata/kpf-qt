@@ -34,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->menuExit->setShortcut(Qt::CTRL | Qt::Key_Q);
     ui->menuAbout->setShortcut(Qt::Key_F1);
     ui->menuOpen->setShortcut(Qt::CTRL | Qt::Key_O);
+    ui->menuLogger->setShortcut(Qt::CTRL | Qt::Key_L);
 
     this->logger->write("Registering widget event listeners");
     this->connect(ui->bQuit, SIGNAL(clicked(bool)), this, SLOT(onQuitClicked()));
@@ -136,8 +137,9 @@ void MainWindow::onK2BrowseClicked()
 bool MainWindow::browse(QString location, const char *exe)
 {
     QFileDialog dlg;
-    dlg.setFileMode(QFileDialog::Directory);
-    dlg.setOption(QFileDialog::ShowDirsOnly);
+//    dlg.setNameFilter(QString(exe).replace("/", ""));
+    //dlg.setFileMode(QFileDialog::Directory);
+    //dlg.setOption(QFileDialog::ShowDirsOnly);
     if(location != "")
         dlg.setDirectory(location);
     int result = dlg.exec();
@@ -145,9 +147,15 @@ bool MainWindow::browse(QString location, const char *exe)
     if(result)
     {
         dir = dlg.selectedFiles()[0];
-        QFile file(dir + exe);
+        MsgBox msg(this, "DIR", dir.replace("/swkotor2.exe", "").replace("/swkotor.exe", ""));
+        msg.exec();
+        QFile file(dir);
+        MsgBox msg2(this, "", dir + exe);
+        msg2.exec();
         if(file.exists())
         {
+            MsgBox msg2(this, "Find", "File found");
+            msg2.exec();
 #ifdef Q_OS_WIN32
             dir.replace("/", "\\");
 #endif
@@ -196,6 +204,26 @@ void MainWindow::onINIExportClicked()
         kf = new QFile(QString("%0%1").arg(ui->leKotor2->text(), KOTOR2_EXE));
         if(kf->exists())
         {
+//            QString loc;
+//            if(ui->leKotor2->text().contains("Program Files"))
+//            {
+//                QDir vs(VSTORE);
+//                QStringList dirs = vs.entryList();
+//                for(int i = 0; i < dirs.count(); i++)
+//                {
+//                    if(dirs[i] == "Program Files")
+//                    {
+//                        MsgBox msg(this, "PF", "PF 32");
+//                        msg.exec();
+//                    }
+//                    else if(dirs[i] == "Program Files (x86)")
+//                    {
+//                        MsgBox msg(this, "PF", "PF 64");
+//                        msg.exec();
+//                    }
+//                }
+//            }
+
             this->logger->write("Path validated. Applying to INI config");
             reader.setValue("Installed", "K2_Installed", "1");
             reader.setValue("Paths", "K2_Path", ui->leKotor2->text());

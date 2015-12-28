@@ -11,8 +11,6 @@ set QMAKE=%QT%\qmake.exe
 set MAKE=%MINGW%\mingw32-make.exe
 set PATH=%MINGW%;%QT%;%PATH%
 
-if exist bin\win32\KPF.exe goto clean
-
 rem Just in case you wanna run a certain
 rem event manually, use one of the cmd args
 rem -b force build
@@ -27,6 +25,8 @@ if "%1" NEQ "" (
 		goto error
 	)
 )
+
+if exist bin\win32\KPF.exe goto clean
 
 :build
 set /p j="How many threads do you want running for compilation? "
