@@ -12,6 +12,7 @@ void Logger::write(QString line)
     // Write Log line
     QDateTime dt(QDateTime::currentDateTime());
     m_LogContents.append(QString("[%1]: %2\n").arg(dt.toString("hh:mm:ss"), line));
+    emit appendLine(this->m_LogContents);
 }
 
 void Logger::save()
@@ -29,4 +30,9 @@ void Logger::save()
     writer << m_LogContents;
     writer.flush();
     logFile.close();
+}
+
+QString Logger::getCurrentLog()
+{
+    return this->m_LogContents;
 }

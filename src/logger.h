@@ -14,6 +14,10 @@ public:
     explicit Logger(QObject *parent = 0);
     void write(QString line);
     void save();
+    QString getCurrentLog();
+
+signals:
+    void appendLine(QString text);
 
 private:
     QString m_LogFilename;

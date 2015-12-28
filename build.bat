@@ -68,7 +68,8 @@ if exist "libstdc++-6.dll" del "libstdc++-6.dll"
 if exist "libwinpthread-1.dll" del "libwinpthread-1.dll"
 if exist icuuc53.dll del icuuc53.dll
 if exist platforms\qwindows.dll del platforms\qwindows.dll
-if exist kse.ini del kse.ini
+if exist kse.ini del kse.
+if exist logs rmdir /S /Q logs
 cd "%CWD%\src"
 %MAKE% clean
 if exist object_script.KPF.Debug del object_script.KPF.Debug

@@ -8,12 +8,12 @@
 class MsgBox
 {
 public:
-    explicit MsgBox(QWidget *parent = 0, QString title = "", QString text = "", int button = MsgBox::NoButton, QString icon = "info");
+    explicit MsgBox(QWidget *parent = 0, QString title = "", QString text = "", int button = MsgBox::NoButton, QString icon = MsgBox::IconInfo);
     void setIcon(QString type);
     int exec();
     void setTitle(QString title);
     void setText(QString text);
-    void resetContent(QString title, QString text, int button = MsgBox::NoButton, QString icon = "info");
+    void resetContent(QString title, QString text, int button = MsgBox::NoButton, QString icon = MsgBox::IconInfo);
     void close();
 
     static int YesNo;
@@ -23,6 +23,10 @@ public:
     static int OkCancel;
     static int Cancel;
     static int NoButton;
+
+    static QString IconError;
+    static QString IconQuestion;
+    static QString IconInfo;
 
 private:
     QMessageBox *msgBox;

@@ -49,7 +49,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->connect(ui->menuExit, SIGNAL(triggered(bool)), this, SLOT(onMenuItemExitClicked()));
     this->connect(ui->menuAbout, SIGNAL(triggered(bool)), this, SLOT(onMenuItemAboutClicked()));
     this->connect(ui->menuDelete, SIGNAL(triggered(bool)), this, SLOT(onMenuItemDeleteClicked()));
-
+    this->connect(ui->menuLogger, SIGNAL(triggered(bool)), this, SLOT(onMenuItemLoggerClicked()));
     
     this->connect(ui->menuOpen, SIGNAL(triggered(bool)), this, SLOT(onMenuItemOpenClicked()));
 
@@ -114,7 +114,7 @@ void MainWindow::onK1BrowseClicked()
     }
     else
     {
-        MsgBox msg(this, "Invalid Path", "The kotor game executable could not be found! Is this the game's root directory?", MsgBox::Ok, "critical");
+        MsgBox msg(this, "Invalid Path", "The kotor game executable could not be found! Is this the game's root directory?", MsgBox::Ok, MsgBox::IconError);
         msg.exec();
     }
 }
@@ -128,7 +128,7 @@ void MainWindow::onK2BrowseClicked()
     }
     else
     {
-        MsgBox msg(this, "Invalid Path", "The kotor2 game executable could not be found! Is this the game's root directory?", MsgBox::Ok, "critical");
+        MsgBox msg(this, "Invalid Path", "The kotor2 game executable could not be found! Is this the game's root directory?", MsgBox::Ok, MsgBox::IconError);
         msg.exec();
     }
 }
@@ -319,14 +319,14 @@ void MainWindow::detectPaths(bool rescan)
         this->logger->write("Initializing registry scanner");
         this->changed = true;
 #ifdef Q_OS_WIN32
-        // We'll look for CD entries first. Since I only kave KotOR1 on CD, it's the only check for now
-        RegistryReader reader;
-        reader.open(KOTOR_CD_REG_KEY_64);
-        if(reader.hasKey("Path"))
-        {
-            ui->leKotor->setText(reader.getValue("Path"));
-        }
+        // We'll look for CD entries first.
+        this->cdShit("k1", KOTOR_CD_REG_KEY_32, KOTOR_CD_REG_KEY_64); // KotOR 1
+        this->cdShit("k2", KOTOR2_CD_REG_KEY_32, KOTOR2_CD_REG_KEY_64); // KotOR 2
 
+        // This hole block will be overlooked if GOG stuff is not found.
+        // Otherwise it'll look. But isn't fruitful if they're not from GOG
+        // GOG calles on Steam too. Same rule applies
+        RegistryReader reader;
         reader.open(GOG_64_REG_KEY);
         if(reader.hasGroup("Games"))
             this->gogShit(GOG_64_REG_KEY);
@@ -339,6 +339,7 @@ void MainWindow::detectPaths(bool rescan)
                 this->steamShit();
         }
 #else
+        this->logger->write("Registry not supported on current OS. Attempting scan of config files instead");
         this->steamShit();
 #endif
     }
@@ -471,6 +472,31 @@ void MainWindow::gogShit(QString gogKey)
 #endif
 }
 
+void MainWindow::cdShit(QString game, QString key32, QString key64)
+{
+    RegistryReader reader;
+    reader.open(key32); // check 32 bit first // 64 if 32 isn't found
+    if(reader.hasKey("Path"))
+    {
+        if(game == "k1")
+            ui->leKotor->setText(reader.getValue("Path"));
+        else if(game == "k2")
+            ui->leKotor2->setText(reader.getValue("Path"));
+    }
+    else
+    {
+        // 32 bit found nothing. Moving to 64 bit
+        reader.open(key64);
+        if(reader.hasKey("Path"))
+        {
+            if(game == "k1")
+                ui->leKotor->setText(reader.getValue("Path"));
+            else if(game == "k2")
+                ui->leKotor2->setText(reader.getValue("Path"));
+        }
+    }
+}
+
 void MainWindow::onMenuItemExitClicked()
 {
     qApp->quit();
@@ -491,7 +517,7 @@ void MainWindow::onMenuItemDeleteClicked()
     {
         this->logger->write("INI found, sending delete confirmation");
         msg = MsgBox(this, "Confirmation", "Are you sure you wish to remove kse.ini? You'll have to regenerate it if you need to use KSE again.", MsgBox::YesNo);
-        msg.setIcon("question");
+        msg.setIcon(MsgBox::IconQuestion);
         if(msg.exec() == MsgBox::Yes)
         {
             this->logger->write("Confirmed deletion, deleting INI");
@@ -523,9 +549,18 @@ void MainWindow::onMenuItemOpenClicked()
     }
     else
     {
-        MsgBox msg(this, "INI Not Found", QString("%1 was not found on your system. Are you sure it exists?").arg(INI_PATH), MsgBox::Ok, "critical");
+        MsgBox msg(this, "INI Not Found", QString("%1 was not found on your system. Are you sure it exists?").arg(INI_PATH), MsgBox::Ok, MsgBox::IconError);
         msg.exec();
     }
+}
+
+void MainWindow::onMenuItemLoggerClicked()
+{
+    this->logger->write("Creating logger window");
+    LoggerConsole *console = new LoggerConsole(this);
+    this->logger->write("Registering logger to console");
+    console->registerLogger(this->logger);
+    console->show();
 }
 
 void MainWindow::onUndoClicked()
