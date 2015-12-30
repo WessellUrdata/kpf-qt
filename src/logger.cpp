@@ -20,11 +20,11 @@ void Logger::save()
     QDateTime dt(QDateTime::currentDateTime());
     m_LogContents.append(QString("\n==== End log. Time: %1 ====\n\n").arg(dt.toString("yyyy-MM-dd hh:mm:ss")));
     // Save log file
-    QDir logDir("logs");
+    QDir logDir(LOGS_DIR);
     if(!logDir.exists())
         logDir.mkpath(".");
 
-    QFile logFile("logs/" + m_LogFilename);
+    QFile logFile(LOGS_DIR + m_LogFilename);
     logFile.open(QIODevice::WriteOnly | QIODevice::Text);
     QTextStream writer(&logFile);
     writer << m_LogContents;
