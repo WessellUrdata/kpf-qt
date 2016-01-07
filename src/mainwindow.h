@@ -8,6 +8,7 @@
 #include <QCloseEvent>
 #include <QDesktopWidget>
 #include <QDesktopServices>
+#include <QDirIterator>
 
 #include "refs.h"
 #include "inireader.h"
@@ -40,6 +41,7 @@ public slots:
     void onMenuItemAboutClicked();
     void onMenuItemDeleteClicked();
     void onMenuItemOpenClicked();
+    void onMenuItemLoggerClicked();
 
     void onTempMenuItemClicked();
 
@@ -50,6 +52,7 @@ private:
     void closeEvent(QCloseEvent *);
     void loadINI();
     void detectPaths(bool);
+    void cdShit(QString game, QString key32, QString key64);
     void steamShit();
     void gogShit(QString);
     bool browse(QString location, const char *);

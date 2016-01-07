@@ -8,6 +8,10 @@ int MsgBox::OkCancel = 2;
 int MsgBox::Cancel = 4194304;
 int MsgBox::NoButton = 0;
 
+QString MsgBox::IconError = "critical";
+QString MsgBox::IconQuestion = "question";
+QString MsgBox::IconInfo = "info";
+
 MsgBox::MsgBox(QWidget *parent, QString title, QString text, int button, QString icon)
 {
     this->msgBox = new QMessageBox(parent);

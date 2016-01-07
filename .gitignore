@@ -7,4 +7,5 @@ src/release/
 *.swo
 src/kpf-qt
 src/*.o
-
+src/object_script.KPF.Debug
+src/object_script.KPF.Release

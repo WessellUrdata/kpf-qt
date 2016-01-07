@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "loggerconsole.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -8,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     this->logger = new Logger(this);
+    this->logger->write("Initializing main window");
 
     // Center window on screen
     QRect pos = frameGeometry();
@@ -27,11 +29,14 @@ MainWindow::MainWindow(QWidget *parent) :
     k1onPlat = false;
 #endif
 
+    this->logger->write("Creating menu strip keyboard shortcuts");
     // Keyboard shortcuts
     ui->menuExit->setShortcut(Qt::CTRL | Qt::Key_Q);
     ui->menuAbout->setShortcut(Qt::Key_F1);
     ui->menuOpen->setShortcut(Qt::CTRL | Qt::Key_O);
+    ui->menuLogger->setShortcut(Qt::CTRL | Qt::Key_L);
 
+    this->logger->write("Registering widget event listeners");
     this->connect(ui->bQuit, SIGNAL(clicked(bool)), this, SLOT(onQuitClicked()));
     this->connect(ui->bK1Browse, SIGNAL(clicked(bool)), this, SLOT(onK1BrowseClicked()));
     this->connect(ui->bK2Browse, SIGNAL(clicked(bool)), this, SLOT(onK2BrowseClicked()));
@@ -48,13 +53,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Temporary.
     this->connect(ui->menuDelete, SIGNAL(triggered(bool)), this, SLOT(onTempMenuItemClicked()));
-
     
     this->connect(ui->menuOpen, SIGNAL(triggered(bool)), this, SLOT(onMenuItemOpenClicked()));
 
+    this->logger->write("Initializing automated path detection");
     detectPaths(false);
 
     // Show something happened. Let them know to export shit :p
+    // This method is a liar. It ALWAYS says this if no INI is found
+    // But if a game isn't it STILL FUCKING SAYS IT! Fix it..
     QFile ini(INI_PATH);
     if(!ini.exists())
     {
@@ -84,6 +91,7 @@ void MainWindow::onTextChanged(QString)
 // subclassing QMainWindow for closing event
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    this->logger->write("Application close event fired");
     if(changed)
     {
         MsgBox msg(this, "Unsaved Changes",
@@ -93,10 +101,15 @@ void MainWindow::closeEvent(QCloseEvent *event)
             event->ignore();
     }
 
+    this->logger->write("Cleaning up any potential INI backups");
     // We're not ignoring the event now, let's destroy our backup file!
     QFile file(INI_BACKUP);
     if(file.exists())
         file.remove();
+
+    this->logger->write("Saving log file");
+    this->logger->write("Terminating KPF");
+    this->logger->save();
 }
 
 void MainWindow::onQuitClicked()
@@ -108,11 +121,12 @@ void MainWindow::onK1BrowseClicked()
 {
     if(this->browse(ui->leKotor->text(), KOTOR_EXE))
     {
+        this->logger->write(QString("KotOR 1 found from manual selection: %1/%2").arg(ui->leKotor->text(), KOTOR_EXE));
         ui->leKotor->setText(tempPath);
     }
     else
     {
-        MsgBox msg(this, "Invalid Path", "The kotor game executable could not be found! Is this the game's root directory?", MsgBox::Ok, "critical");
+        MsgBox msg(this, "Invalid Path", "The kotor game executable could not be found! Is this the game's root directory?", MsgBox::Ok, MsgBox::IconError);
         msg.exec();
     }
 }
@@ -121,11 +135,12 @@ void MainWindow::onK2BrowseClicked()
 {
     if(this->browse(ui->leKotor2->text(), KOTOR2_EXE))
     {
+        this->logger->write(QString("KotOR 2 found from manual selection: %1/%2").arg(ui->leKotor2->text(), KOTOR2_EXE));
         ui->leKotor2->setText(tempPath);
     }
     else
     {
-        MsgBox msg(this, "Invalid Path", "The kotor2 game executable could not be found! Is this the game's root directory?", MsgBox::Ok, "critical");
+        MsgBox msg(this, "Invalid Path", "The kotor2 game executable could not be found! Is this the game's root directory?", MsgBox::Ok, MsgBox::IconError);
         msg.exec();
     }
 }
@@ -133,8 +148,7 @@ void MainWindow::onK2BrowseClicked()
 bool MainWindow::browse(QString location, const char *exe)
 {
     QFileDialog dlg;
-    dlg.setFileMode(QFileDialog::Directory);
-    dlg.setOption(QFileDialog::ShowDirsOnly);
+    dlg.setNameFilter(QString(exe).replace("/", ""));
     if(location != "")
         dlg.setDirectory(location);
     int result = dlg.exec();
@@ -142,7 +156,7 @@ bool MainWindow::browse(QString location, const char *exe)
     if(result)
     {
         dir = dlg.selectedFiles()[0];
-        QFile file(dir + exe);
+        QFile file(dir);
         if(file.exists())
         {
 #ifdef Q_OS_WIN32
@@ -158,7 +172,9 @@ bool MainWindow::browse(QString location, const char *exe)
 
 void MainWindow::onINIExportClicked()
 {
+    this->logger->write("Gathering required information for INI generation");
     // Let's make sure to back up the ini file shall we?
+    this->logger->write("Attempting to create backup of current INI");
     QFile ini(INI_PATH);
     if(ini.exists())
         ini.copy(INI_BACKUP);
@@ -167,6 +183,7 @@ void MainWindow::onINIExportClicked()
     {
         INIReader reader;
         reader.open(INI_PATH);
+        this->logger->write("Validating given path for KotOR 1");
         QFile *kf = new QFile(QString("%0%1").arg(ui->leKotor->text(), KOTOR_EXE));
         if(kf->exists())
         {
@@ -174,22 +191,47 @@ void MainWindow::onINIExportClicked()
             reader.setValue("Installed", "K1_Installed", "0");
             reader.setValue("Paths", "K1_Path", "undef");
 #else
+            this->logger->write("Path validated. Applying to INI config");
             reader.setValue("Installed", "K1_Installed", "1");
             reader.setValue("Paths", "K1_Path", ui->leKotor->text());
 #endif
         }
         else
         {
+            this->logger->write("KotOR 1 not found. Applying default values");
             reader.setValue("Installed", "K1_Installed", "0");
             reader.setValue("Paths", "K1_Path", "undef");
         }
 
+        this->logger->write("Validating given path for KotOR 2");
         kf = new QFile(QString("%0%1").arg(ui->leKotor2->text(), KOTOR2_EXE));
         if(kf->exists())
         {
+//            QString loc;
+//            if(ui->leKotor2->text().contains("Program Files"))
+//            {
+//                QDir vs(VSTORE);
+//                QStringList dirs = vs.entryList();
+//                for(int i = 0; i < dirs.count(); i++)
+//                {
+//                    if(dirs[i] == "Program Files")
+//                    {
+//                        MsgBox msg(this, "PF", "PF 32");
+//                        msg.exec();
+//                    }
+//                    else if(dirs[i] == "Program Files (x86)")
+//                    {
+//                        MsgBox msg(this, "PF", "PF 64");
+//                        msg.exec();
+//                    }
+//                }
+//            }
+
+            this->logger->write("Path validated. Applying to INI config");
             reader.setValue("Installed", "K2_Installed", "1");
             reader.setValue("Paths", "K2_Path", ui->leKotor2->text());
 
+            this->logger->write("Applying secondary KotOR 2 save info");
             // kotor2 really needs special entry for it's regular saves?
             QString k2p;
 #ifdef Q_OS_WIN32
@@ -201,23 +243,27 @@ void MainWindow::onINIExportClicked()
         }
         else
         {
+            this->logger->write("KotOR 2 not found. Applying default values");
             reader.setValue("Installed", "K2_Installed", "0");
             reader.setValue("Paths", "K2_Path", "undef");
 
             reader.setValue("Paths", "K2_SavePath", "undef");
         }
 
+        this->logger->write("Attempting to determine cloud saves for KotOR 2");
         // KotOR 2 cloud saves check
         QDir csdir(ui->leKotor2->text() + "/cloudsaves/");
         QStringList dirs = csdir.entryList();
         reader.setValue("Options", "Use_K2_Cloud", "0");
         reader.setValue("Paths", "K2_SavePathCloud", "undef");
+        this->logger->write("Scanning directory for steam game/user ID");
         for(int i = 0; i < dirs.count(); i++)
         {
             QRegularExpression regex("([0-9]+)");
             QRegularExpressionMatch match = regex.match(dirs[i]);
             if(match.hasMatch())
             {
+                this->logger->write("Match found. Applying to INI config");
                 reader.setValue("Options", "Use_K2_Cloud", "1");
 #ifdef Q_OS_WIN32
                 reader.setValue("Paths", "K2_SavePathCloud", QString(csdir.absolutePath() + "\\" + dirs[i]).replace("/", "\\"));
@@ -228,6 +274,7 @@ void MainWindow::onINIExportClicked()
             }
             else
             {
+                this->logger->write("Cloud saves cannot be found. Applying default values");
                 reader.setValue("Options", "Use_K2_Cloud", "0");
                 reader.setValue("Paths", "K2_SavePathCloud", "undef");
             }
@@ -237,6 +284,7 @@ void MainWindow::onINIExportClicked()
         reader.setValue("Installed", "TJM_Installed", "0");
         reader.setValue("Paths", "TJM_Path", "undef");
 
+        this->logger->write("Generating INI");
         reader.setValue("Paths", "Steam_Path", steamPath);
         MsgBox msg(this, "INI Export", QString("Contents successfully exported to %1").arg(INI_PATH), MsgBox::Ok);
         msg.exec();
@@ -253,6 +301,7 @@ void MainWindow::onINIExportClicked()
 
 void MainWindow::onRescanClicked()
 {
+    this->logger->write("Initializing rescan of paths");
     detectPaths(true);
     MsgBox msg(this, "Rescan Complete", QString(
                    "Rescaning has completed. You should now see your paths in the main window. ")
@@ -262,9 +311,11 @@ void MainWindow::onRescanClicked()
 
 void MainWindow::loadINI()
 {
+    this->logger->write("Checking for existance of INI");
     QFile iniFile(INI_PATH);
     if(iniFile.exists())
     {
+        this->logger->write("INI found, reading from INI");
         INIReader reader;
         reader.open(INI_PATH);
         QString k1path = reader.getValue("Paths", "K1_Path");
@@ -273,6 +324,7 @@ void MainWindow::loadINI()
 
         if(k1path != "undef")
         {
+            this->logger->write("Applying found path of KotOR 1 to UI");
             QFile file(k1path + KOTOR_EXE);
             if(file.exists())
                 ui->leKotor->setText(k1path);
@@ -280,6 +332,7 @@ void MainWindow::loadINI()
 
         if(k2path != "undef")
         {
+            this->logger->write("Applying found path of KotOR 2 to UI");
             QFile file(k2path + KOTOR2_EXE);
             if(file.exists())
                 ui->leKotor2->setText(k2path);
@@ -294,16 +347,17 @@ void MainWindow::detectPaths(bool rescan)
         loadINI();
     else
     {
+        this->logger->write("Initializing registry scanner");
         this->changed = true;
 #ifdef Q_OS_WIN32
-        // We'll look for CD entries first. Since I only kave KotOR1 on CD, it's the only check for now
-        RegistryReader reader;
-        reader.open(KOTOR_CD_REG_KEY_64);
-        if(reader.hasKey("Path"))
-        {
-            ui->leKotor->setText(reader.getValue("Path"));
-        }
+        // We'll look for CD entries first.
+        this->cdShit("k1", KOTOR_CD_REG_KEY_32, KOTOR_CD_REG_KEY_64); // KotOR 1
+        this->cdShit("k2", KOTOR2_CD_REG_KEY_32, KOTOR2_CD_REG_KEY_64); // KotOR 2
 
+        // This hole block will be overlooked if GOG stuff is not found.
+        // Otherwise it'll look. But isn't fruitful if they're not from GOG
+        // GOG calles on Steam too. Same rule applies
+        RegistryReader reader;
         reader.open(GOG_64_REG_KEY);
         if(reader.hasGroup("Games"))
             this->gogShit(GOG_64_REG_KEY);
@@ -316,6 +370,7 @@ void MainWindow::detectPaths(bool rescan)
                 this->steamShit();
         }
 #else
+        this->logger->write("Registry not supported on current OS. Attempting scan of config files instead");
         this->steamShit();
 #endif
     }
@@ -325,13 +380,16 @@ void MainWindow::detectPaths(bool rescan)
 // Method is cleaned up a bit. I'll rename later
 void MainWindow::steamShit()
 {
+    this->logger->write("Checking for existance of Steam");
     QFile file(QString("%1%2").arg(DEFAULT_STEAM_PATH, STEAM_EXE));
     if(file.exists())
     {
+        this->logger->write("Reading Steam config for possible paths");
         steamPath = DEFAULT_STEAM_PATH;
     }
     else
     {
+        this->logger->write("Steam not found, getting Steam location from Registry");
 #ifdef Q_OS_WIN32
         RegistryReader reader;
         reader.open(STEAM_REG_KEY);
@@ -347,12 +405,14 @@ void MainWindow::steamShit()
     QFile steamExe(steamPath + STEAM_EXE);
     if(steamExe.exists())
     {
+        this->logger->write("Steam found. Loading config.vdf");
         QFile config(steamPath + "/config/config.vdf");
         if(config.open(QIODevice::ReadOnly | QIODevice::Text))
         {
+            this->logger->write("Scanning config.vdf for library information");
             QTextStream in(&config);
-            bool k = false, kk = false; // might remove...
-            while(!in.atEnd())
+            bool k = false, kk = false, stop = false; // might remove...
+            while((!in.atEnd()) && stop == false)
             {
                 QString line = in.readLine();
                 QString k1f;
@@ -378,15 +438,21 @@ void MainWindow::steamShit()
 
                     if(k1.exists())
                     {
+
                         ui->leKotor->setText(k1f);
                         k = true;
+                        if(k)
+                            this->logger->write("KotOR 1 found. Applying to UI");
                     }
 
                     QFile k2(k2f + KOTOR2_EXE);
                     if(k2.exists())
                     {
+
                         ui->leKotor2->setText(k2f);
                         kk = true;
+                        if(kk)
+                            this->logger->write("KotOR 2 found. Applying to UI");
                     }
 
                     // Be prepared. Big if statement, I'll do what I can
@@ -394,6 +460,7 @@ void MainWindow::steamShit()
                     if((k && kk) ||
                             (k || kk))
                     {
+                        stop = true;
                         break;
                     }
                 }
@@ -413,6 +480,7 @@ void MainWindow::gogShit(QString gogKey)
     reader.open(gogKey + "\\Games");
     if(reader.hasKey("1207666283"))
     {
+        this->logger->write("KotOR 1 found for GOG. Applying to UI");
         reader.open(gogKey + "\\Games\\1207666283");
         ui->leKotor->setText(reader.getValue("PATH"));
         k1found = true;
@@ -420,6 +488,7 @@ void MainWindow::gogShit(QString gogKey)
     reader.open(gogKey + "\\Games"); // Remember using reader to open another key? Gotta reopen the last one ;p
     if(reader.hasKey("1421404581"))
     {
+        this->logger->write("KotOR 2 found for GOG. Applying to UI");
         reader.open(gogKey + "\\Games\\1421404581");
         ui->leKotor2->setText(reader.getValue("PATH"));
         k2found = true;
@@ -427,11 +496,41 @@ void MainWindow::gogShit(QString gogKey)
 
     // Now we run the steam check if one or none of the
     // following conditions are met
+    this->logger->write("Determining if Steam needs to be checked for Paths");
     if((k1found == false || k2found == false))
+    {
+        this->logger->write("Initializing steam search");
         this->steamShit();
+    }
 #else
+    this->logger->write("Initializing steam search");
     this->steamShit();
 #endif
+}
+
+void MainWindow::cdShit(QString game, QString key32, QString key64)
+{
+    RegistryReader reader;
+    reader.open(key32); // check 32 bit first // 64 if 32 isn't found
+    if(reader.hasKey("Path"))
+    {
+        if(game == "k1")
+            ui->leKotor->setText(reader.getValue("Path"));
+        else if(game == "k2")
+            ui->leKotor2->setText(reader.getValue("Path"));
+    }
+    else
+    {
+        // 32 bit found nothing. Moving to 64 bit
+        reader.open(key64);
+        if(reader.hasKey("Path"))
+        {
+            if(game == "k1")
+                ui->leKotor->setText(reader.getValue("Path"));
+            else if(game == "k2")
+                ui->leKotor2->setText(reader.getValue("Path"));
+        }
+    }
 }
 
 void MainWindow::onMenuItemExitClicked()
@@ -449,12 +548,15 @@ void MainWindow::onMenuItemDeleteClicked()
 {
     MsgBox msg;
     QFile ini(INI_PATH);
+    this->logger->write("Checking for existance of INI");
     if(ini.exists())
     {
+        this->logger->write("INI found, sending delete confirmation");
         msg = MsgBox(this, "Confirmation", "Are you sure you wish to remove kse.ini? You'll have to regenerate it if you need to use KSE again.", MsgBox::YesNo);
-        msg.setIcon("question");
+        msg.setIcon(MsgBox::IconQuestion);
         if(msg.exec() == MsgBox::Yes)
         {
+            this->logger->write("Confirmed deletion, deleting INI");
 #ifdef Q_OS_WIN32
             QDir dir(QString(INI_PATH).replace("kse.ini", ""));
             dir.removeRecursively();
@@ -475,22 +577,38 @@ void MainWindow::onMenuItemDeleteClicked()
 void MainWindow::onMenuItemOpenClicked()
 {
     QFile ini(INI_PATH);
+    this->logger->write("Checking for existance of INI");
     if(ini.exists())
+    {
+        this->logger->write("INI found. Opening in default text editor");
         QDesktopServices::openUrl(QString(INI_PATH));
+    }
     else
     {
-        MsgBox msg(this, "INI Not Found", QString("%1 was not found on your system. Are you sure it exists?").arg(INI_PATH), MsgBox::Ok, "critical");
+        MsgBox msg(this, "INI Not Found", QString("%1 was not found on your system. Are you sure it exists?").arg(INI_PATH), MsgBox::Ok, MsgBox::IconError);
         msg.exec();
     }
+}
+
+void MainWindow::onMenuItemLoggerClicked()
+{
+    this->logger->write("Creating logger window");
+    LoggerConsole *console = new LoggerConsole(this);
+    this->logger->write("Registering logger to console");
+    console->registerLogger(this->logger);
+    console->show();
 }
 
 void MainWindow::onUndoClicked()
 {
     QFile ini(INI_PATH);
+    this->logger->write("Attempting to revert generation of INI");
     if(ini.exists() && this->exported)
     {
+        this->logger->write("INI found. Reverting changes");
         QFile tempini(INI_BACKUP);
 
+        this->logger->write("Cleaning up backups");
         if(tempini.exists())
         {
             QFile::remove(INI_PATH);

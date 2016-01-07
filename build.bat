@@ -11,8 +11,6 @@ set QMAKE=%QT%\qmake.exe
 set MAKE=%MINGW%\mingw32-make.exe
 set PATH=%MINGW%;%QT%;%PATH%
 
-if exist bin\win32\kpf-qt.exe goto clean
-
 rem Just in case you wanna run a certain
 rem event manually, use one of the cmd args
 rem -b force build
@@ -28,6 +26,8 @@ if "%1" NEQ "" (
 	)
 )
 
+if exist bin\win32\KPF.exe goto clean
+
 :build
 set /p j="How many threads do you want running for compilation? "
 echo.
@@ -36,7 +36,7 @@ echo building makefile
 echo.
 echo compiling binary
 %MAKE% -j%j% -C src
-copy /Y src\release\kpf-qt.exe "%CWD%\bin\win32\kpf-qt.exe"
+copy /Y src\release\KPF.exe "%CWD%\bin\win32\KPF.exe"
 echo.
 echo copyting required libraries
 copy /Y %QT%\Qt5Core.dll bin\win32\Qt5Core.dll
@@ -57,7 +57,7 @@ goto finish
 echo.
 echo Cleaning up binaries
 cd "%CWD%\bin\win32"
-if exist kpf-qt.exe del kpf-qt.exe
+if exist KPF.exe del KPF.exe
 if exist Qt5Core.dll del Qt5Core.dll
 if exist Qt5Gui.dll del Qt5Gui.dll
 if exist Qt5Widgets.dll del Qt5Widgets.dll
@@ -68,11 +68,12 @@ if exist "libstdc++-6.dll" del "libstdc++-6.dll"
 if exist "libwinpthread-1.dll" del "libwinpthread-1.dll"
 if exist icuuc53.dll del icuuc53.dll
 if exist platforms\qwindows.dll del platforms\qwindows.dll
-if exist kse.ini del kse.ini
+if exist kse.ini del kse.
+if exist logs rmdir /S /Q logs
 cd "%CWD%\src"
 %MAKE% clean
-if exist object_script.kpf-qt.Debug del object_script.kpf-qt.Debug
-if exist object_script.kpf-qt.Release del object_script.kpf-qt.Release
+if exist object_script.KPF.Debug del object_script.KPF.Debug
+if exist object_script.KPF.Release del object_script.KPF.Release
 if exist debug rmdir /S /Q debug
 if exist release rmdir /S /Q release
 if exist Makefile del Makefile
