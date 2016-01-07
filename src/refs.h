@@ -22,6 +22,7 @@
     #define STEAM_EXE "/steam.exe"
     #define INI_BACKUP QString("%1/AppData/Local/Temp/kse.ini.bak").arg(QDir::homePath())
     #define VSTORE QString("%1/AppData/Local/VirtualStore/").arg(QDir::homePath())
+    #define LOGS_DIR "./logs/"
     #ifndef SUPPORT
         #define INI_PATH QString("%1/AppData/Local/KSE/kse.ini").arg(QDir::homePath())
     #else
@@ -33,8 +34,9 @@
     #define KOTOR2_SAVES QString("%1/.local/share/aspyr-media/kotor2/saves").arg(QDir::homePath())
     #define DEFAULT_STEAM_PATH QString("%1/.local/share/Steam").arg(QDir::homePath())
     #define STEAM_EXE "/steam.sh"
-    #define INI_BACKUP QString("%1/.local/kse.ini.backup").arg(QDir::homePath())
-    #define INI_PATH QString("%1/kse.ini").arg(QDir::homePath())
+    #define INI_BACKUP QString("%1/.local/kse/kse.ini.backup").arg(QDir::homePath())
+    #define INI_PATH QString("%1/kse/kse.ini").arg(QDir::homePath())
+    #define LOGS_DIR QString("%1/kse/logs/").arg(QDir::homePath());
 #endif
 
 #ifdef Q_OS_WIN32
