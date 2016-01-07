@@ -36,3 +36,8 @@ QString Logger::getCurrentLog()
 {
     return this->m_LogContents;
 }
+
+QString Logger::getLogsDir()
+{
+    return "./logs";
+}

@@ -8,6 +8,7 @@ LoggerConsole::LoggerConsole(QWidget *parent) :
     ui->setupUi(this);
 
     this->connect(this->ui->bClose, SIGNAL(clicked(bool)), this, SLOT(onCloseButtonClicked()));
+//    this->createMenuBar(); // I'll figure it out one day...
 }
 
 LoggerConsole::~LoggerConsole()
@@ -35,4 +36,14 @@ void LoggerConsole::onCloseButtonClicked()
 {
     this->logger->write("Terminating logger");
     this->close();
+}
+
+void LoggerConsole::createMenuBar()
+{
+    QMenuBar *menu = new QMenuBar(ui->centralWidget);
+    menu->adjustSize();
+
+    this->fileMenu = new QMenu("&File");
+
+    menu->addMenu(this->fileMenu);
 }

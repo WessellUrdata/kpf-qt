@@ -2,6 +2,9 @@
 #define LOGGERCONSOLE_H
 
 #include <QDialog>
+#include <QMenuBar>
+#include <QMenu>
+
 #include "logger.h"
 
 namespace Ui {
@@ -24,6 +27,13 @@ public slots:
 private:
     Ui::LoggerConsole *ui;
     Logger *logger;
+
+    void createMenuBar();
+
+    QMenu *fileMenu;
+    QMenu *itemExit;
+    QMenu *itemView;
+
 };
 
 #endif // LOGGERCONSOLE_H

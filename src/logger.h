@@ -22,6 +22,8 @@ signals:
 private:
     QString m_LogFilename;
     QString m_LogContents;
+
+    QString getLogsDir();
 };
 
 #endif // LOGGER_H

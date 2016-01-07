@@ -58,6 +58,8 @@ MainWindow::MainWindow(QWidget *parent) :
     detectPaths(false);
 
     // Show something happened. Let them know to export shit :p
+    // This method is a liar. It ALWAYS says this if no INI is found
+    // But if a game isn't it STILL FUCKING SAYS IT! Fix it..
     QFile ini(INI_PATH);
     if(!ini.exists())
     {
@@ -137,9 +139,7 @@ void MainWindow::onK2BrowseClicked()
 bool MainWindow::browse(QString location, const char *exe)
 {
     QFileDialog dlg;
-//    dlg.setNameFilter(QString(exe).replace("/", ""));
-    //dlg.setFileMode(QFileDialog::Directory);
-    //dlg.setOption(QFileDialog::ShowDirsOnly);
+    dlg.setNameFilter(QString(exe).replace("/", ""));
     if(location != "")
         dlg.setDirectory(location);
     int result = dlg.exec();
@@ -147,15 +147,9 @@ bool MainWindow::browse(QString location, const char *exe)
     if(result)
     {
         dir = dlg.selectedFiles()[0];
-        MsgBox msg(this, "DIR", dir.replace("/swkotor2.exe", "").replace("/swkotor.exe", ""));
-        msg.exec();
         QFile file(dir);
-        MsgBox msg2(this, "", dir + exe);
-        msg2.exec();
         if(file.exists())
         {
-            MsgBox msg2(this, "Find", "File found");
-            msg2.exec();
 #ifdef Q_OS_WIN32
             dir.replace("/", "\\");
 #endif
@@ -408,8 +402,8 @@ void MainWindow::steamShit()
         {
             this->logger->write("Scanning config.vdf for library information");
             QTextStream in(&config);
-            bool k = false, kk = false; // might remove...
-            while(!in.atEnd())
+            bool k = false, kk = false, stop = false; // might remove...
+            while((!in.atEnd()) && stop == false)
             {
                 QString line = in.readLine();
                 QString k1f;
@@ -435,17 +429,21 @@ void MainWindow::steamShit()
 
                     if(k1.exists())
                     {
-                        this->logger->write("KotOR 1 found. Applying to UI");
+
                         ui->leKotor->setText(k1f);
                         k = true;
+                        if(k)
+                            this->logger->write("KotOR 1 found. Applying to UI");
                     }
 
                     QFile k2(k2f + KOTOR2_EXE);
                     if(k2.exists())
                     {
-                        this->logger->write("KotOR 2 found. Applying to UI");
+
                         ui->leKotor2->setText(k2f);
                         kk = true;
+                        if(kk)
+                            this->logger->write("KotOR 2 found. Applying to UI");
                     }
 
                     // Be prepared. Big if statement, I'll do what I can
@@ -453,6 +451,7 @@ void MainWindow::steamShit()
                     if((k && kk) ||
                             (k || kk))
                     {
+                        stop = true;
                         break;
                     }
                 }
