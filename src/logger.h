@@ -7,6 +7,8 @@
 #include <QTextStream>
 #include <QDir>
 
+#include "refs.h"
+
 class Logger : public QObject
 {
     Q_OBJECT
