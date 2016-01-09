@@ -49,10 +49,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->connect(ui->menuExit, SIGNAL(triggered(bool)), this, SLOT(onMenuItemExitClicked()));
     this->connect(ui->menuAbout, SIGNAL(triggered(bool)), this, SLOT(onMenuItemAboutClicked()));
-//    this->connect(ui->menuDelete, SIGNAL(triggered(bool)), this, SLOT(onMenuItemDeleteClicked()));
+    this->connect(ui->menuLogger, SIGNAL(triggered(bool)), this, SLOT(onMenuItemLoggerClicked()));
 
-    // Temporary.
+#ifdef SUPPORT
     this->connect(ui->menuDelete, SIGNAL(triggered(bool)), this, SLOT(onTempMenuItemClicked()));
+#else
+    this->connect(ui->menuDelete, SIGNAL(triggered(bool)), this, SLOT(onMenuItemDeleteClicked()));
+#endif
     
     this->connect(ui->menuOpen, SIGNAL(triggered(bool)), this, SLOT(onMenuItemOpenClicked()));
 
