@@ -8,6 +8,11 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    // If support, set support in title
+#ifdef SUPPORT
+    this->setWindowTitle("KPF: KSE PathFinder (Support Build)");
+#endif
+
     this->logger = new Logger(this);
     this->logger->write("Initializing main window");
 
