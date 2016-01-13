@@ -42,6 +42,7 @@ public slots:
     void onMenuItemDeleteClicked();
     void onMenuItemOpenClicked();
     void onMenuItemLoggerClicked();
+    void onMenuItemLogsClicked();
 
     void onTempMenuItemClicked();
 

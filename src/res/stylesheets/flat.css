@@ -1,4 +1,5 @@
-QWidget {
+QWidget 
+{
     font-size: 13px;
     font-weight: 300;
     color: #2C3E50;
@@ -20,26 +21,40 @@ QPushButton
     padding: 5px 20px;
     font-weight: bold;
 }
-QPushButton:hover {
+QPushButton:hover 
+{
     background-color: #128F76;
     border-color: #11866F;
 }
-QPushButton:focus {
+QPushButton:focus 
+{
     background-color: #0E6F5C;
     border-color: #0A4B3E;
 }
-QLineEdit {
+QPushButton:disabled
+{
+    border-color: #47e1c2;
+    background-color: #47e1c2;
+}
+QLineEdit
+{
     background-color: transparent;
     border: 1px solid #c3d1df;
     border-radius: 4px;
     color: #2C3E50;
     padding: 4px;
 }
-QLineEdit:focus {
+QLineEdit:focus
+{
     border-color: #2C3E50;
     border-width: 1px;
 }
-QMenuBar {
+QLineEdit:disabled
+{
+    color: #55789b; 
+}
+QMenuBar 
+{
     background-color: #2C3E50;
     color: white;
     font-size: 12px;
@@ -49,7 +64,8 @@ QMenuBar::item
 {
     background: transparent;
 }
-QMenuBar::item::selected {
+QMenuBar::item::selected
+{
     color: #149C82;
 }
 QMenu

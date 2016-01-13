@@ -31,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent) :
 #ifdef Q_OS_UNIX
     ui->leKotor->setEnabled(false);
     ui->leKotor->setText("KotOR is not available on this platform!");
+    ui->bK1Browse->setEnabled(false);
     k1onPlat = false;
 #endif
 
@@ -39,7 +40,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->menuExit->setShortcut(Qt::CTRL | Qt::Key_Q);
     ui->menuAbout->setShortcut(Qt::Key_F1);
     ui->menuOpen->setShortcut(Qt::CTRL | Qt::Key_O);
-    ui->menuLogger->setShortcut(Qt::CTRL | Qt::Key_L);
+    ui->menuLogger->setShortcut(Qt::CTRL | Qt::Key_C);
+    ui->menuLogs->setShortcut(Qt::CTRL | Qt::Key_L);
+    ui->menuDelete->setShortcut(Qt::CTRL | Qt::Key_D);
 
     this->logger->write("Registering widget event listeners");
     this->connect(ui->bQuit, SIGNAL(clicked(bool)), this, SLOT(onQuitClicked()));
@@ -55,6 +58,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->connect(ui->menuExit, SIGNAL(triggered(bool)), this, SLOT(onMenuItemExitClicked()));
     this->connect(ui->menuAbout, SIGNAL(triggered(bool)), this, SLOT(onMenuItemAboutClicked()));
     this->connect(ui->menuLogger, SIGNAL(triggered(bool)), this, SLOT(onMenuItemLoggerClicked()));
+    this->connect(ui->menuLogs, SIGNAL(triggered(bool)), this, SLOT(onMenuItemLogsClicked()));
 
 #ifdef SUPPORT
     this->connect(ui->menuDelete, SIGNAL(triggered(bool)), this, SLOT(onTempMenuItemClicked()));
@@ -68,14 +72,19 @@ MainWindow::MainWindow(QWidget *parent) :
     detectPaths(false);
 
     // Show something happened. Let them know to export shit :p
-    // This method is a liar. It ALWAYS says this if no INI is found
-    // But if a game isn't it STILL FUCKING SAYS IT! Fix it..
+    // Finally fixed this piece of shit check :)
     QFile ini(INI_PATH);
     if(!ini.exists())
     {
-        MsgBox msg(this, "Paths Found", "KotOR and/or KotOR 2 were automatically detected on your system. All you need to do is generate the INI for KSE. Simply click \"Export to INI\" and you're all set to continue running KSE",
-                   MsgBox::Ok);
-        msg.exec();
+        MsgBox msg(this, "Paths Found",
+            "KotOR and/or KotOR 2 were automatically detected on your system. All you need to do is generate the INI for KSE. Simply click \"Export to INI\" and you're all set to continue running KSE",
+            MsgBox::Ok);
+
+        if(((ui->leKotor->text() != "") && ui->leKotor->isEnabled() == true)
+                || (ui->leKotor2->text() != ""))
+        {
+            msg.exec();
+        }
     }
 }
 
@@ -215,26 +224,6 @@ void MainWindow::onINIExportClicked()
         kf = new QFile(QString("%0%1").arg(ui->leKotor2->text(), KOTOR2_EXE));
         if(kf->exists())
         {
-//            QString loc;
-//            if(ui->leKotor2->text().contains("Program Files"))
-//            {
-//                QDir vs(VSTORE);
-//                QStringList dirs = vs.entryList();
-//                for(int i = 0; i < dirs.count(); i++)
-//                {
-//                    if(dirs[i] == "Program Files")
-//                    {
-//                        MsgBox msg(this, "PF", "PF 32");
-//                        msg.exec();
-//                    }
-//                    else if(dirs[i] == "Program Files (x86)")
-//                    {
-//                        MsgBox msg(this, "PF", "PF 64");
-//                        msg.exec();
-//                    }
-//                }
-//            }
-
             this->logger->write("Path validated. Applying to INI config");
             reader.setValue("Installed", "K2_Installed", "1");
             reader.setValue("Paths", "K2_Path", ui->leKotor2->text());
@@ -605,6 +594,20 @@ void MainWindow::onMenuItemLoggerClicked()
     this->logger->write("Registering logger to console");
     console->registerLogger(this->logger);
     console->show();
+}
+
+void MainWindow::onMenuItemLogsClicked()
+{
+    QDir dir(LOGS_DIR);
+    if(dir.exists())
+    {
+        QDesktopServices::openUrl(LOGS_DIR);
+    }
+    else
+    {
+        MsgBox msg(this, "Logs Location Error", "The logs directory was not found on your PC!", MsgBox::Ok, MsgBox::IconError);
+        msg.exec();
+    }
 }
 
 void MainWindow::onUndoClicked()

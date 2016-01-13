@@ -104,7 +104,7 @@
      <x>0</x>
      <y>0</y>
      <width>550</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -112,7 +112,9 @@
      <string>&amp;File</string>
     </property>
     <addaction name="menuOpen"/>
+    <addaction name="menuLogs"/>
     <addaction name="menuDelete"/>
+    <addaction name="separator"/>
     <addaction name="menuExit"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -123,7 +125,7 @@
    </widget>
    <widget class="QMenu" name="menuOptions">
     <property name="title">
-     <string>Options</string>
+     <string>O&amp;ptions</string>
     </property>
     <addaction name="menuLogger"/>
    </widget>
@@ -154,6 +156,11 @@
   <action name="menuLogger">
    <property name="text">
     <string>Logger Console</string>
+   </property>
+  </action>
+  <action name="menuLogs">
+   <property name="text">
+    <string>Open &amp;Logs Folder</string>
    </property>
   </action>
  </widget>
