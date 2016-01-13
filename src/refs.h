@@ -36,7 +36,7 @@
     #define STEAM_EXE "/steam.sh"
     #define INI_BACKUP QString("%1/.local/kse/kse.ini.backup").arg(QDir::homePath())
     #define INI_PATH QString("%1/kse/kse.ini").arg(QDir::homePath())
-    #define LOGS_DIR QString("%1/kse/logs/").arg(QDir::homePath());
+    #define LOGS_DIR QString("%1/kse/logs/").arg(QDir::homePath())
 #endif
 
 #ifdef Q_OS_WIN32
