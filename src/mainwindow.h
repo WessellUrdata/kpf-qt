@@ -10,6 +10,10 @@
 #include <QDesktopServices>
 #include <QDirIterator>
 
+#ifdef Q_OS_WIN32
+    #include <QProcess>
+#endif
+
 #include "refs.h"
 #include "inireader.h"
 #include "registryreader.h"

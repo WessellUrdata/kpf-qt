@@ -601,7 +601,14 @@ void MainWindow::onMenuItemLogsClicked()
     QDir dir(LOGS_DIR);
     if(dir.exists())
     {
-        QDesktopServices::openUrl(LOGS_DIR);
+        // Windows won't run Explorer for some reason
+        // At least QProcess works....ass
+#ifdef Q_OS_WIN32
+       QString proc("C:\\Windows\\explorer.exe");
+       QProcess::startDetached(proc, QStringList(dir.absolutePath().replace("/", "\\")));
+#else
+        QDesktopServices::openUrl(QString(LOGS_DIR));
+#endif
     }
     else
     {
