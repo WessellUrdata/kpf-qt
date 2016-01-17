@@ -5,7 +5,7 @@ color 0A
 rem build env. applications
 rem please change according to your setup
 set CWD=%~dp0
-set QT=C:\Qt\5.5\mingw492_32\bin
+set QT=C:\Qt\5.4\mingw491_32\bin
 set MINGW=C:\MinGW\bin
 set QMAKE=%QT%\qmake.exe
 set MAKE=%MINGW%\mingw32-make.exe
@@ -42,9 +42,9 @@ echo copyting required libraries
 copy /Y %QT%\Qt5Core.dll bin\win32\Qt5Core.dll
 copy /Y %QT%\Qt5Gui.dll bin\win32\Qt5Gui.dll
 copy /Y %QT%\Qt5Widgets.dll bin\win32\Qt5Widgets.dll
-copy /Y %QT%\icudt54.dll bin\win32\icudt53.dll
-copy /Y %QT%\icuin54.dll bin\win32\icuin53.dll
-copy /Y %QT%\icuuc54.dll bin\win32\icuuc53.dll
+copy /Y %QT%\icudt53.dll bin\win32\icudt53.dll
+copy /Y %QT%\icuin53.dll bin\win32\icuin53.dll
+copy /Y %QT%\icuuc53.dll bin\win32\icuuc53.dll
 copy /Y %QT%\libgcc_s_dw2-1.dll bin\win32\libgcc_s_dw2-1.dll
 copy /Y "%QT%\libstdc++-6.dll" "bin\win32\libstdc++-6.dll"
 copy /Y "%QT%\libwinpthread-1.dll" "bin\win32\libwinpthread-1.dll"
