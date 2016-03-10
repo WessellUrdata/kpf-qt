@@ -12,7 +12,7 @@
 #define KOTOR_PATH "/steamapps/common/swkotor"
 #define KOTOR2_PATH "/steamapps/common/Knights of the Old Republic II"
 
-//#define SUPPORT // uncomment for branch: kse-337a-support // dumbass, it needs to be here for the support branch...uncomment for master
+//#define SUPPORT // uncomment for branch: kse-337a-support
 
 #ifdef Q_OS_WIN32
     #define KOTOR_EXE "/swkotor.exe"

@@ -165,6 +165,7 @@ void MainWindow::onK2BrowseClicked()
 bool MainWindow::browse(QString location, const char *exe)
 {
     QFileDialog dlg;
+    dlg.setWindowTitle(QString("Find Game Executable: %1").arg(QString(exe).replace("/", "")));
     dlg.setNameFilter(QString(exe).replace("/", ""));
     if(location != "")
         dlg.setDirectory(location);
@@ -176,9 +177,11 @@ bool MainWindow::browse(QString location, const char *exe)
         QFile file(dir);
         if(file.exists())
         {
+            dir.replace(QString(exe), "/");
 #ifdef Q_OS_WIN32
             dir.replace("/", "\\");
 #endif
+            dir.truncate(dir.length() - 1); // attempt to remove trailing slash
             tempPath = QString(dir);
             return true;
         }
