@@ -7,8 +7,6 @@
 if [ -e "bin/linux/KPF" ] ; then
     make clean
 else
-    echo How many threads do you want to compile with? 
-    read threads
-    make -e threads=-j$threads
+    make
 fi
 
