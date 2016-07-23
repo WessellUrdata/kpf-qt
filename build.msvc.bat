@@ -11,11 +11,14 @@ set QMAKE=%QT%\qmake.exe
 set VC="%VCPATH%\vcvarsall.bat"
 rem set PATH=%QT%;%VC%;%PATH%
 
+
+rem Make sure to get nmake!!!!!
+call %VC% x86
+
 rem Just in case you wanna run a certain
 rem event manually, use one of the cmd args
 rem -b force build
 rem -c force clean
-
 if "%1" NEQ "" (
 	if "%1" EQU "-b" (
 		goto build
@@ -25,9 +28,6 @@ if "%1" NEQ "" (
 		goto error
 	)
 )
-
-rem Make sure to get nmake!!!!!
-call %VC% x86
 
 if exist bin\win32\KPF.exe goto clean
 
