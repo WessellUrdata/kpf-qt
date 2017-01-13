@@ -2,6 +2,8 @@
 title KPF Build Tool
 color 0A
 
+goto defunct
+
 rem build env. applications
 rem please change according to your setup
 set CWD=%~dp0
@@ -91,3 +93,8 @@ echo.
 
 :finish
 pause
+
+:defunct
+echo KPF is built with MSVC now, please run build.msvc.bat to build. Thanks!
+pause
+exit

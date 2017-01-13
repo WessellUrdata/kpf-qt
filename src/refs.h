@@ -12,7 +12,7 @@
 #define KOTOR_PATH "/steamapps/common/swkotor"
 #define KOTOR2_PATH "/steamapps/common/Knights of the Old Republic II"
 
-// #define SUPPORT // uncomment for branch: kse-337a-support
+//#define SUPPORT // uncomment for branch: kse-337a-support
 
 #ifdef Q_OS_WIN32
     #define KOTOR_EXE "/swkotor.exe"
@@ -47,27 +47,6 @@
     #define KOTOR_CD_REG_KEY_64 "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\BioWare\\sw\\KOTOR"
     #define KOTOR2_CD_REG_KEY_32 "HKEY_LOCAL_MACHINE\\SOFTWARE\\Lucasarts\\KOTOR2"
     #define KOTOR2_CD_REG_KEY_64 "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432node\\Lucasarts\\KOTOR2"
-#endif
-
-// The following 2 statements are used to determine
-// System architecture at runtime
-
-// Check windows
-#if _WIN32 || _WIN64
-   #if _WIN64
-     #define ENV64BIT
-  #else
-    #define ENV32BIT
-  #endif
-#endif
-
-// Check GCC
-#if __GNUC__
-  #if __x86_64__ || __ppc64__
-    #define ENV64BIT
-  #else
-    #define ENV32BIT
-  #endif
 #endif
 
 #endif // REFS_H

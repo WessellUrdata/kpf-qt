@@ -9,6 +9,7 @@
 #include <QDesktopWidget>
 #include <QDesktopServices>
 #include <QDirIterator>
+#include <QDir>
 
 #ifdef Q_OS_WIN32
     #include <QProcess>
@@ -61,6 +62,7 @@ private:
     void steamShit();
     void gogShit(QString);
     bool browse(QString location, const char *);
+    bool is32Bit();
 
     QString steamPath;
     bool k1onPlat;

@@ -214,6 +214,23 @@ void MainWindow::onINIExportClicked()
             this->logger->write("Path validated. Applying to INI config");
             reader.setValue("Installed", "K1_Installed", "1");
             reader.setValue("Paths", "K1_Path", ui->leKotor->text());
+
+            // this is to add vstore support (location not confirmed. give me a mo to confirm)
+            this->logger->write("Applying secondary KotOR save info");
+            QString kp;
+            QDir s(ui->leKotor->text() + "\\saves");
+            if (s.exists())
+                kp = ui->leKotor->text() + "\\saves";
+            else
+            {
+                QString pf;
+                if (is32Bit())
+                    pf = "Program Files";
+                else
+                    pf = "Program Files (x86)";
+
+                kp = QString("%1%2\\LucasArts\\SWKotOR\\saves").arg(VSTORE, pf);
+            }
 #endif
         }
         else
@@ -232,14 +249,27 @@ void MainWindow::onINIExportClicked()
             reader.setValue("Paths", "K2_Path", ui->leKotor2->text());
 
             this->logger->write("Applying secondary KotOR 2 save info");
-            // kotor2 really needs special entry for it's regular saves?
+            // kotor2 really needs special entry for it's regular saves? (Yes, for VStore support, just like KotOR)
             QString k2p;
 #ifdef Q_OS_WIN32
-            k2p = ui->leKotor2->text() + "\\saves";
+//            k2p = ui->leKotor2->text() + "\\saves";
+            QDir s(ui->leKotor2->text() + "\\saves");
+            if(s.exists())
+                k2p = ui->leKotor2->text() + "\\saves";
+            else
+            {
+                QString pf;
+                if (is32Bit())
+                    pf = "Program Files";
+                else
+                    pf = "Program Files (x86)";
+
+                k2p = QString("%1%2\\LucasArts\\SWKotOR2\\saves").arg(VSTORE, pf);
+            }
 #else
             k2p = KOTOR2_SAVES;
 #endif
-            reader.setValue("Paths", "K2_SavePath", k2p);
+            reader.setValue("Paths", "K2_SavePath", k2p.replace("/", "\\"));
         }
         else
         {
@@ -648,4 +678,13 @@ void MainWindow::onUndoClicked()
         MsgBox msg(this, "Undo Export", "Could not undo export. No changes were made", MsgBox::Ok);
         msg.exec();
     }
+}
+
+bool MainWindow::is32Bit()
+{
+    QString arch = QSysInfo::buildCpuArchitecture();
+    if (arch == "i386")
+        return true;
+
+    return false;
 }
