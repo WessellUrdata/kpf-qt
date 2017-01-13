@@ -231,6 +231,8 @@ void MainWindow::onINIExportClicked()
 
                 kp = QString("%1%2\\LucasArts\\SWKotOR\\saves").arg(VSTORE, pf);
             }
+
+            reader.setValue("Paths", "K1_SavePath", kp.replace("/", "\\"));
 #endif
         }
         else
