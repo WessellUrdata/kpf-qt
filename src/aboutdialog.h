@@ -5,6 +5,8 @@
 #include <QDesktopServices>
 #include <QUrl>
 
+#include "refs.h"
+
 namespace Ui {
 class AboutDialog;
 }

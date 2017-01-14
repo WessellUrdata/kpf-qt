@@ -9,6 +9,8 @@ AboutDialog::AboutDialog(QWidget *parent) :
 
     this->connect(ui->bClose, SIGNAL(clicked(bool)), this, SLOT(onCloseClick()));
     this->connect(ui->bWebsite, SIGNAL(clicked(bool)), this, SLOT(onWebsiteClick()));
+
+    ui->lblVersion->setText(QString("Version: %1").arg(APP_VERSION));
 }
 
 AboutDialog::~AboutDialog()

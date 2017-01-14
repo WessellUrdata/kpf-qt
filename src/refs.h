@@ -9,6 +9,8 @@
  * All constants will be stored in here
  */
 
+#define APP_VERSION "1.1"
+
 #define KOTOR_PATH "/steamapps/common/swkotor"
 #define KOTOR2_PATH "/steamapps/common/Knights of the Old Republic II"
 
