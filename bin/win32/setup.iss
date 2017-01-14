@@ -126,5 +126,6 @@ Filename: "{app}\{#ExeName}"; Description: "{cm:LaunchProgram,{#StringChange(App
 
 [UninstallDelete]
 Type: files; Name: "{app}\*.txt"
-Type: files; Name: "{app}\*.log"
+Type: files; Name: "{app}\logs\*.log"
 Type: files; Name: "{app}\kse.ini"
+Type: dirifempty; Name: "{app}\logs"
