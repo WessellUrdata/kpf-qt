@@ -4,7 +4,7 @@
 #define Publisher "KSE Team"
 #define PublisherURL "http://deadlystream.com/forum/files/file/503-kotor-save-game-editor/"
 #define SupportURL "http://mantis.kalebklein.com"
-#define ExeName "kse.exe"
+#define ExeName "kpf.exe"
 #define SetupBaseName "kse_setup"
 #define Build "Pre-Release"
 #define VCLStylesSkinPath "{localappdata}\VCLStylesSkin"
@@ -74,20 +74,21 @@ end;
 
 [Files]
 ; Exe files
-Source: "kse.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "kpf-qt.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "updater.exe"; DestDir: "{app}"; Flags: ignoreversion
+;Source: "kse.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "kpf.exe"; DestDir: "{app}"; Flags: ignoreversion
+;Source: "updater.exe"; DestDir: "{app}"; Flags: ignoreversion
 
 ; Images
 Source: "boba.bmp"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\src\res\images\fett.ico"; DestDir: "{app}"; Flags: ignoreversion
 
 ; Libraries
-Source: "icudt53.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "icuin53.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "icuuc53.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "libgcc_s_dw2-1.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "libstdc++-6.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "libwinpthread-1.dll"; DestDir: "{app}"; Flags: ignoreversion
+;Source: "icudt53.dll"; DestDir: "{app}"; Flags: ignoreversion
+;Source: "icuin53.dll"; DestDir: "{app}"; Flags: ignoreversion
+;Source: "icuuc53.dll"; DestDir: "{app}"; Flags: ignoreversion
+;Source: "libgcc_s_dw2-1.dll"; DestDir: "{app}"; Flags: ignoreversion
+;Source: "libstdc++-6.dll"; DestDir: "{app}"; Flags: ignoreversion
+;Source: "libwinpthread-1.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Qt5Core.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Qt5Gui.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Qt5Widgets.dll"; DestDir: "{app}"; Flags: ignoreversion
@@ -117,8 +118,8 @@ Name: "{group}\{cm:Support}"; Filename: "{#SupportURL}"
 ; =================
 ; Sesion: Desktop Icons
 ; =================
-Name: "{commondesktop}\{#AppName}"; Filename: "{app}\{#ExeName}"; Tasks: desktopicon; IconFilename: "{app}\boba.bmp"
-Name: "{commondesktop}\{#KPFAppName}"; Filename: "{app}\kpf-qt.exe"; Tasks: kpficon
+Name: "{commondesktop}\{#AppName}"; Filename: "{app}\{#ExeName}"; Tasks: desktopicon; IconFilename: "{app}\fett.ico"
+Name: "{commondesktop}\{#KPFAppName}"; Filename: "{app}\kpf.exe"; Tasks: kpficon
 
 [Run]
 Filename: "{app}\{#ExeName}"; Description: "{cm:LaunchProgram,{#StringChange(AppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
