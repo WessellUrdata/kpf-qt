@@ -3,7 +3,7 @@ Name=KPF Qt
 Version=0.1
 Type=Application
 Terminal=false
-Icon=
+Icon=/usr/local/share/icons/kpf/fett.ico
 Exec=/opt/kpf-qt/KPF
 Categories=Game;
 
