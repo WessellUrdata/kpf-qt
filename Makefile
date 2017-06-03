@@ -1,4 +1,4 @@
-all: qmake-make build copy
+all: qmake-make build
 
 qmake-make:
 	qmake kpf-qt.pro -o src/Makefile
