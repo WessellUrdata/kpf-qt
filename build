@@ -1,0 +1,76 @@
+#!/bin/bash
+
+# This build script was written in Arch Linux.
+# Qt may have different file names for some of its
+# Programs, like qmake. Refer to your distro's
+# documentaion for Qt
+
+###
+# Builds the application
+###
+function build_app {
+    if [ -z ${MAKEFLAGS+x} ] ; then
+        echo -n 'How many threads do you want running for compilation? '
+        read THREADS
+        MAKEFLAGS=-j$THREADS
+        unset THREADS
+    fi
+
+    echo "building Makefile"
+    qmake-qt5 kpf-qt.pro -o src/Makefile
+    echo "compiling binary"
+    make $MAKEFLAGS -C src
+    cp src/KPF bin/linux/KPF
+    echo "Build complete!"
+}
+
+###
+# Cleans the application's compiled files and binaries
+###
+function clean_app {
+    echo "Cleaning up binaries"
+    make -C src clean
+    rm -rf src/Makefile
+    rm -rf src/KPF
+    rm -rf src/.qmake.stash
+    rm -rf bin/linux/KPF
+    echo "Cleaning complete"
+}
+
+###
+# Shows the help text
+###
+function show_help {
+    echo -e "Just in case you wanna run a certain" \
+        "event manually, use one of the flags\n" \
+        "\n./build [FLAG]\n" \
+        "\t-b|--build - Force build\n" \
+        "\t-c|--clean - Force clean\n" \
+        "\t-h|--help - Show this help text"
+}
+
+DOWORK=false
+
+for A in $@
+do
+    case $A in
+        -b|--build)
+            DOWORK=true
+            build_app
+            ;;
+        -c|--clean)
+            DOWORK=true
+            clean_app
+            ;;
+        -h|--help)
+            DOWORK=true
+            show_help
+            ;;
+    esac
+done
+
+if ! $DOWORK ; then
+    build_app
+fi
+
+unset DOWORK
