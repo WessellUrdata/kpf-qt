@@ -6,7 +6,7 @@
 #define SupportURL "http://mantis.kalebklein.com"
 #define ExeName "kpf.exe"
 #define SetupBaseName "kse_setup"
-#define Build "Pre-Release-mingw32-i686"
+#define Build "Pre-Release-msvc-x64"
 #define VCLStylesSkinPath "{localappdata}\VCLStylesSkin"
 
 [Setup]
@@ -83,9 +83,6 @@ Source: "boba.bmp"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\src\res\images\fett.ico"; DestDir: "{app}"; Flags: ignoreversion
 
 ; Libraries
-Source: "libgcc_s_dw2-1.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "libstdc++-6.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "libwinpthread-1.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Qt5Core.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Qt5Gui.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Qt5Widgets.dll"; DestDir: "{app}"; Flags: ignoreversion
