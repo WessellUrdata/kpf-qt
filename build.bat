@@ -1,14 +1,13 @@
 @echo off
 title KPF Build Tool
 
-rem This build script is for MSVC and only suppors 64 bit systems
-rem To build for 32 bit systems, please use `build.bat` instead
-rem and build with mingw32.
+rem This build script is for MinGW, which is 32 bit
+rem To build for 64 bit systems, please use `build.msvc.bat` instead
 
 rem build env. applications
 rem please change according to your setup
 set CWD=%~dp0
-set QT=C:\Qt\5.10.1\mingw53_32\bin
+set QT=C:\Qt\5.11.2\mingw53_32\bin
 set PATH=%QT%;C:\Qt\Tools\mingw530_32\bin;%PATH%
 
 rem Just in case you wanna run a certain

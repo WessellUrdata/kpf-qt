@@ -1,14 +1,14 @@
 @echo off
 title KPF Build Tool
 
-rem This build script is for MSVC and only suppors 64 bit systems
+rem This build script is for MSVC and only supports 64 bit systems
 rem To build for 32 bit systems, please use `build.bat` instead
 rem and build with mingw32.
 
 rem build env. applications
 rem please change according to your setup
 set CWD=%~dp0
-set QT=C:\Qt\5.10.1\msvc2017_64\bin
+set QT=C:\Qt\5.11.2\msvc2017_64\bin
 set PATH=%PATH%;%QT%;^
 %PROGRAMFILES(X86)%\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build
 
