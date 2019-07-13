@@ -70,7 +70,7 @@ qmake kpf-qt.pro -o staging\Makefile
 cd staging
 jom /F Makefile.release %J%
 copy /Y "%CWD%\staging\release\KPF.exe" "%CWD%\bin\win64\KPF.exe"
-copy /Y C:\Qt\vcredist\%VCR% "%CWD%"
+copy /Y C:\Qt\vcredist\%VCR% "%CWD%\bin\win64\%VCR%"
 echo.
 echo Copying required libraries
 copy /Y C:\Qt\%QT%\%MSVC%\bin\Qt5Core.dll "%CWD%\bin\win64\Qt5Core.dll"

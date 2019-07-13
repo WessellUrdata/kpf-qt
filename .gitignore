@@ -6,3 +6,5 @@ bin/win64/redist/*
 !bin/win64/redist/.gitkeep
 bin/win64/platforms/*
 !bin/win64/platforms/.gitkeep
+bin/win64/*.exe
+bin/win64/*.dll
