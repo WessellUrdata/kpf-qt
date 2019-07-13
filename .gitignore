@@ -1,11 +1,8 @@
 *.user
-src/Makefil*
-src/ui_*
-src/debug/
-src/release/
 *.swp
 *.swo
-src/kpf-qt
-src/*.o
-src/object_script.KPF.Debug
-src/object_script.KPF.Release
+staging/*
+bin/win64/redist/*
+!bin/win64/redist/.gitkeep
+bin/win64/platforms/*
+!bin/win64/platforms/.gitkeep

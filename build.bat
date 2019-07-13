@@ -1,84 +1,103 @@
 @echo off
 title KPF Build Tool
 
-rem This build script is for MinGW, which is 32 bit
-rem To build for 64 bit systems, please use `build.msvc.bat` instead
-
-rem build env. applications
-rem please change according to your setup
 set CWD=%~dp0
-set QT=C:\Qt\5.11.2\mingw53_32\bin
-set PATH=%QT%;C:\Qt\Tools\mingw530_32\bin;%PATH%
 
-rem Just in case you wanna run a certain
-rem event manually, use one of the cmd args
-rem -b force build
-rem -c force clean
-for %%A in (%*) do (
-	if "%%A"=="-b" (
-		goto build
-	) else if "%%A" equ "-c" (
-		goto clean
-	) else if "%%A" equ "-h" (
-		goto help
-	) else (
-		goto error
-	)
+:: Qt version to build against
+set QT=5.13.0
+
+:: Visual Studio Version (2017 or 2019)
+set VS=2019
+
+:: Change to 64 bit a 64 bit build
+:: If statement allows defining ARCH
+:: outside of this build script for
+:: external use
+if not defined ARCH (
+    set ARCH=32
 )
 
-if exist bin\win32\KPF.exe goto clean
+:: Sets architecture specific variables
+if %ARCH% EQU 32 (
+    set MSVC=msvc2017
+    set VCA=x86
+    set VCR=vcredist_msvc2017_x86.exe
+) else if %ARCH% EQU 64 (
+    set MSVC=msvc2017_64
+    set VCA=amd64
+    set VCR=vcredist_msvc2017_x64.exe
+)
+
+:: Command flags
+:: -b goes right to build
+:: -c goes right to clean
+:: any other goes to help
+for %%A in (%*) do (
+    if "%%A" EQU "-b" (
+        goto build
+    ) else if "%%A" EQU "-c" (
+        goto clean
+    ) else (
+        goto help
+    )
+)
+
+:: Setting system paths with needed toolchain locations
+set PF=%PROGRAMFILES(X86)%
+set CPATH=%PATH%
+set PATH=C:\Qt\%QT%\%MSVC%\bin;C:\Qt\Tools\QtCreator\bin;^
+%PF%\Microsoft Visual Studio\%VS%\Community\VC\Auxiliary\Build;%CPATH%;
+
+:: Setup C Build Environment
+call vcvarsall %VCA%
 
 :build
-set /p j="How many threads do you want running for compilation? "
 echo.
-echo building makefile
-qmake kpf-qt.pro -o src\Makefile
+:: Gets max processor threads to compile on
+set /p J="Would you like to use all CPU cores? [Y/n] "
+if "%J%" EQU "Y" (
+    set J=/J %NUMBER_OF_PROCESSORS%
+    echo %NPROC%
+) else if "%J%" EQU "y" (
+    set J=/J %NUMBER_OF_PROCESSORS%
+) else (
+    set J=
+)
 echo.
-echo compiling binary
-mingw32-make -j%j% -C src
-copy /Y src\release\KPF.exe "%CWD%\bin\win32\KPF.exe"
+echo Building makefile
+:: mkdir build
+qmake kpf-qt.pro -o staging\Makefile
+cd staging
+jom /F Makefile.release %J%
+copy /Y "%CWD%\staging\release\KPF.exe" "%CWD%\bin\win64\KPF.exe"
+copy /Y C:\Qt\vcredist\%VCR% "%CWD%"
 echo.
-echo copyting required libraries
-copy /Y %QT%\Qt5Core.dll bin\win32\Qt5Core.dll
-copy /Y %QT%\Qt5Gui.dll bin\win32\Qt5Gui.dll
-copy /Y %QT%\Qt5Widgets.dll bin\win32\Qt5Widgets.dll
-copy /Y %QT%\libgcc_s_dw2-1.dll bin\win32\libgcc_s_dw2-1.dll
-copy /Y "%QT%\libstdc++-6.dll" "bin\win32\libstdc++-6.dll"
-copy /Y "%QT%\libwinpthread-1.dll" "bin\win32\libwinpthread-1.dll"
-copy /Y %QT%\..\plugins\platforms\qwindows.dll bin\win32\platforms\qwindows.dll
+echo Copying required libraries
+copy /Y C:\Qt\%QT%\%MSVC%\bin\Qt5Core.dll "%CWD%\bin\win64\Qt5Core.dll"
+copy /Y C:\Qt\%QT%\%MSVC%\bin\Qt5Gui.dll "%CWD%\bin\win64\Qt5Gui.dll"
+copy /Y C:\Qt\%QT%\%MSVC%\bin\Qt5Widgets.dll "%CWD%\bin\win64\Qt5Widgets.dll"
+copy /Y C:\Qt\%QT%\%MSVC%\plugins\platforms\qwindows.dll "%CWD%\bin\win64\platforms\qwindows.dll"
 echo.
-echo Build complete!
-goto finish
+cd %CWD%
+echo Build Complete!
+goto end
 
 :clean
 echo.
 echo Cleaning up binaries
-cd "%CWD%\bin\win32"
+cd %CWD%\bin\win64
 if exist KPF.exe del KPF.exe
 if exist Qt5Core.dll del Qt5Core.dll
 if exist Qt5Gui.dll del Qt5Gui.dll
 if exist Qt5Widgets.dll del Qt5Widgets.dll
-if exist libgcc_s_dw2-1.dll del libgcc_s_dw2-1.dll
-if exist "libstdc++-6.dll" del "libstdc++-6.dll"
-if exist "libwinpthread-1.dll" del "libwinpthread-1.dll"
-if exist icuuc54.dll del icuuc54.dll
 if exist platforms\qwindows.dll del platforms\qwindows.dll
+if exist redist\%VCR% del redist\%VCR%
 if exist kse.ini del kse.ini
 if exist logs rmdir /S /Q logs
-cd "%CWD%\src"
-mingw32-make clean
-if exist object_script.KPF.Debug del object_script.KPF.Debug
-if exist object_script.KPF.Release del object_script.KPF.Release
-if exist debug rmdir /S /Q debug
-if exist release rmdir /S /Q release
-if exist Makefile del Makefile
-if exist Makefile.Debug del Makefile.Debug
-if exist Makefile.Release del Makefile.Release
-if exist .qmake.stash del .qmake.stash
-cd ..
-echo.
+cd %CWD%
+if exist staging rmdir /S /Q staging
 echo Cleaning complete
-goto finish
+goto end
 
 :help
 echo.
@@ -86,12 +105,17 @@ echo Just in case you wanna run a certain
 echo event manually, use one of the cmd args
 echo     -b force build
 echo     -c force clean
-echo     -h show help
-goto :finish
 
-:error
-echo.
-echo Error: "%1" is an invalid command switch!
-echo.
-
-:finish
+:end
+:: Clean up created variables
+set PATH=%CPATH%
+set MSVC=
+set QT=
+set VS=
+set J=
+set NPROC=
+set VCR=
+set VCA=
+set PF=
+set ARCH=
+pause
