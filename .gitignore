@@ -2,9 +2,9 @@
 *.swp
 *.swo
 staging/*
-bin/win64/redist/*
-!bin/win64/redist/.gitkeep
-bin/win64/platforms/*
-!bin/win64/platforms/.gitkeep
-bin/win64/*.exe
-bin/win64/*.dll
+bin/windows/redist/*
+!bin/windows/redist/.gitkeep
+bin/windows/platforms/*
+!bin/windows/platforms/.gitkeep
+bin/windows/*.exe
+bin/windows/*.dll

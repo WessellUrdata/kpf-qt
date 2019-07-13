@@ -1,2 +1,2 @@
 @echo off
-build.bat -c
+call build.bat -c
