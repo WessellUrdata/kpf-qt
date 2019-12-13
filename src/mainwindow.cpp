@@ -517,7 +517,7 @@ void MainWindow::gogShit(QString gogKey)
     bool k1found = false, k2found = false;
     RegistryReader reader;
     reader.open(gogKey + "\\Games");
-    if(reader.hasKey("1207666283"))
+    if(reader.hasGroup("1207666283"))
     {
         this->logger->write("KotOR 1 found for GOG. Applying to UI");
         reader.open(gogKey + "\\Games\\1207666283");
@@ -525,7 +525,7 @@ void MainWindow::gogShit(QString gogKey)
         k1found = true;
     }
     reader.open(gogKey + "\\Games"); // Remember using reader to open another key? Gotta reopen the last one ;p
-    if(reader.hasKey("1421404581"))
+    if(reader.hasGroup("1421404581"))
     {
         this->logger->write("KotOR 2 found for GOG. Applying to UI");
         reader.open(gogKey + "\\Games\\1421404581");
