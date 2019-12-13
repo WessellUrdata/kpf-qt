@@ -7,7 +7,7 @@ set CWD=%~dp0
 set QT=5.13.0
 
 :: Visual Studio Version (2017 or 2019)
-set VS=2019
+set VS=2017
 
 :: Change to 64 bit a 64 bit build
 :: If statement allows defining ARCH
