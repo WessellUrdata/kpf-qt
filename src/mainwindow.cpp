@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Center window on screen
     QRect pos = frameGeometry();
-    pos.moveCenter(QDesktopWidget().availableGeometry().center());
+    pos.moveCenter(QGuiApplication::screens().first()->geometry().center());
     move(pos.topLeft());
 
     // setup default values

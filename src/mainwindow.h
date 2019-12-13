@@ -10,6 +10,7 @@
 #include <QDesktopServices>
 #include <QDirIterator>
 #include <QDir>
+#include <QScreen>
 
 #ifdef Q_OS_WIN32
     #include <QProcess>
