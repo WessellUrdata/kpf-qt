@@ -25,5 +25,5 @@ void AboutDialog::onCloseClick()
 
 void AboutDialog::onWebsiteClick()
 {
-    QDesktopServices::openUrl(QUrl("http://deadlystream.com/forum/files/file/503-kotor-save-game-editor/"));
+    QDesktopServices::openUrl(QUrl("https://gitlab.com/kotorsge-team"));
 }

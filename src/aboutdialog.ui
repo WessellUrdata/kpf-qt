@@ -112,7 +112,7 @@ background-position: 5px 5px;</string>
           <string notr="true">font-size: 16px;</string>
          </property>
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;KPF: KSE PathFinder is a simple tool used to grab the paths for Star Wars: Knights of the Old Republic 1 and 2, and used to generate configuration files for KSE.&lt;/p&gt;&lt;p&gt;Copyright © 2015-2017 KSE Team&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;KPF: KSE PathFinder is a simple tool used to grab the paths for Star Wars: Knights of the Old Republic 1 and 2, and used to generate configuration files for KSE.&lt;/p&gt;&lt;p&gt;Copyright © 2015-2019 KSE Team&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
