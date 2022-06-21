@@ -17,8 +17,8 @@
 //#define SUPPORT // uncomment for branch: kse-337a-support
 
 #ifdef Q_OS_WIN32
-    #define KOTOR_EXE "/swkotor.exe"
-    #define KOTOR2_EXE "/swkotor2.exe"
+    #define KOTOR_EXE "/swkotor.ini"
+    #define KOTOR2_EXE "/swkotor2.ini"
     #define KOTOR2_CLOUD_SAVES "/cloudsaves"
     #define DEFAULT_STEAM_PATH "C:\\Program Files (x86)\\Steam"
     #define STEAM_EXE "/steam.exe"
