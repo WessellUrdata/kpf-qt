@@ -4,10 +4,10 @@ title KPF Build Tool
 set CWD=%~dp0
 
 :: Qt version to build against
-set QT=5.13.0
+set QT=5.14.2
 
-:: Visual Studio Version (2017 or 2019)
-set VS=2017
+:: Visual Studio Version (I'm using VS 2022)
+set VS=2022
 
 :: Change to 64 bit a 64 bit build
 :: If statement allows defining ARCH
@@ -21,17 +21,17 @@ if not defined ARCH (
 if %ARCH% EQU 32 (
     set MSVC=msvc2017
     set VCA=x86
-    set VCR=vcredist_msvc2017_x86.exe
+    set VCR=vcredist_msvc2019_x86.exe
 ) else if %ARCH% EQU 64 (
     set MSVC=msvc2017_64
     set VCA=amd64
-    set VCR=vcredist_msvc2017_x64.exe
+    set VCR=vcredist_msvc2019_x64.exe
 )
 
 :: Setting system paths with needed toolchain locations
-set PF=%PROGRAMFILES(X86)%
+set PF=%PROGRAMFILES%
 set CPATH=%PATH%
-set PATH=C:\Qt\%QT%\%MSVC%\bin;C:\Qt\Tools\QtCreator\bin;^
+set PATH=C:\Qt\%QT%\%MSVC%\bin;C:\Qt\Tools\QtCreator\bin;C:\Qt\Tools\QtCreator\bin\jom;^
 %PF%\Microsoft Visual Studio\%VS%\Community\VC\Auxiliary\Build;%CPATH%;
 
 :: Command flags
@@ -51,7 +51,7 @@ for %%A in (%*) do (
 :build
 echo.
 :: Setup C Build Environment
-call vcvarsall %VCA%
+call vcvarsall %VCA% -vcvars_ver=14.16
 echo.
 :: Gets max processor threads to compile on
 set /p J="Would you like to use all CPU cores? [Y/n] "
