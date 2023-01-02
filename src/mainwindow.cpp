@@ -30,15 +30,6 @@ MainWindow::MainWindow(QWidget *parent) :
     this->exported = false;
     this->changed = false;
 
-    // OS specific gaming stuff
-    // certain ones are not on certain OSs
-#ifdef Q_OS_UNIX
-    ui->leKotor->setEnabled(false);
-    ui->leKotor->setText("KotOR is not available on this platform!");
-    ui->bK1Browse->setEnabled(false);
-    k1onPlat = false;
-#endif
-
     this->logger->write("Creating menu strip keyboard shortcuts");
     // Keyboard shortcuts
     ui->menuExit->setShortcut(Qt::CTRL | Qt::Key_Q);
