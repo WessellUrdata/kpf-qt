@@ -453,7 +453,7 @@ void MainWindow::steamShit()
                 {
                     QString instBasePath;
                     if(line.trimmed().startsWith(QString("\"path\"")))
-                        instBasePath = line.replace(QString("\"path\"").arg(i), "").trimmed().replace("\"", "");
+                        instBasePath = line.replace(QString("\"path\""), "").trimmed().replace("\"", "");
                     else
                         instBasePath = steamPath;
 
