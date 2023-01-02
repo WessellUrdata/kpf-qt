@@ -435,12 +435,12 @@ void MainWindow::steamShit()
     QFile steamExe(steamPath + STEAM_EXE);
     if(steamExe.exists())
     {
-        this->logger->write("Steam found. Loading config.vdf");
-        QFile config(steamPath + "/config/config.vdf");
-        if(config.open(QIODevice::ReadOnly | QIODevice::Text))
+        this->logger->write("Steam found. Loading libraryfolders.vdf");
+        QFile libraryfolders(steamPath + "/config/libraryfolders.vdf");
+        if(libraryfolders.open(QIODevice::ReadOnly | QIODevice::Text))
         {
-            this->logger->write("Scanning config.vdf for library information");
-            QTextStream in(&config);
+            this->logger->write("Scanning libraryfolders.vdf for library information");
+            QTextStream in(&libraryfolders);
             bool k = false, kk = false, stop = false; // might remove...
             while((!in.atEnd()) && stop == false)
             {
@@ -452,8 +452,8 @@ void MainWindow::steamShit()
                 for(int i = 0; i < 50; i++)
                 {
                     QString instBasePath;
-                    if(line.trimmed().startsWith(QString("\"BaseInstallFolder_%1\"").arg(i)))
-                        instBasePath = line.replace(QString("\"BaseInstallFolder_%1\"").arg(i), "").trimmed().replace("\"", "");
+                    if(line.trimmed().startsWith(QString("\"path\"")))
+                        instBasePath = line.replace(QString("\"path\"").arg(i), "").trimmed().replace("\"", "");
                     else
                         instBasePath = steamPath;
 

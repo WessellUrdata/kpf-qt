@@ -31,7 +31,7 @@
         #define INI_PATH QString("kse.ini")
     #endif
 #else
-    #define KOTOR_EXE "/swkotor"
+    #define KOTOR_EXE "/swkotor.exe"
     #define KOTOR2_EXE "/KOTOR2"
     #define KOTOR2_SAVES QString("%1/.local/share/aspyr-media/kotor2/saves").arg(QDir::homePath())
     #define DEFAULT_STEAM_PATH QString("%1/.local/share/Steam").arg(QDir::homePath())
