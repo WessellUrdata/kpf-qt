@@ -2,6 +2,8 @@
 
 ## About
 
+This is a fork of the KotOR PathFinder originally hosted on [the GitLab repo](https://gitlab.com/kotorsge-team/kpf-qt).
+
 Unlike the upstream version, this version aims to only support Linux (simply because I don't have a Windows machine to test on). Therefore, all Windows specific code has been removed.
 
 ## Requirements - Linux
