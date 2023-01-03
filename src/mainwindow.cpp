@@ -437,7 +437,7 @@ void MainWindow::onMenuItemDeleteClicked()
 {
     MsgBox msg;
     QFile ini(INI_PATH);
-    this->logger->write("Checking for existance of INI");
+    this->logger->write("Checking for existence of INI");
     if(ini.exists())
     {
         this->logger->write("INI found, sending delete confirmation");
@@ -461,7 +461,7 @@ void MainWindow::onMenuItemDeleteClicked()
 void MainWindow::onMenuItemOpenClicked()
 {
     QFile ini(INI_PATH);
-    this->logger->write("Checking for existance of INI");
+    this->logger->write("Checking for existence of INI");
     if(ini.exists())
     {
         this->logger->write("INI found. Opening in default text editor");
