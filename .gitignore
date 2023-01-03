@@ -8,3 +8,4 @@ bin/windows/platforms/*
 !bin/windows/platforms/.gitkeep
 bin/windows/*.exe
 bin/windows/*.dll
+bin/linux/KPF
