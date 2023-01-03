@@ -1,13 +1,10 @@
-# KPF Qt
+# KPF Qt (for Linux)
 
-## Requirements - Win32
+## About
 
-Qt 5 Framework. (Qt 5.13.0)  
-Visual Studio (2017 or 2019)
+Unlike the upstream version, this version aims to only support Linux (simply because I don't have a Windows machine to test on). Therefore, all Windows specific code has been removed.
 
 ## Requirements - Linux
-
-Qt 5 Framework. - Required to compile & run
 
 ### Qt5 install Arch
 
@@ -19,6 +16,8 @@ $ sudo pacman -S qt5-base qt5-webkit
 
 ## Running
 
-Windows is easy. Required dlls are packaged with the application. Just run KPF.exe
-
 Linux requires installing the Qt framework. v5.4+ is required. Just use the link above, or run the command under Arch if you're an Arch user.
+
+## Credits
+
+Credits to [pazuzu156](https://gitlab.com/pazuzu156) for maintaining the [the original version of this project](https://gitlab.com/kotorsge-team/kpf-qt).
