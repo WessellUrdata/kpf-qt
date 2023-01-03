@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent) :
 #else
     this->connect(ui->menuDelete, SIGNAL(triggered(bool)), this, SLOT(onMenuItemDeleteClicked()));
 #endif
-    
+
     this->connect(ui->menuOpen, SIGNAL(triggered(bool)), this, SLOT(onMenuItemOpenClicked()));
 
     this->logger->write("Initializing automated path detection");
@@ -202,15 +202,13 @@ void MainWindow::onINIExportClicked()
         QFile *kf = new QFile(QString("%0%1").arg(ui->leKotor->text(), KOTOR_EXE));
         if(kf->exists())
         {
-#ifdef Q_OS_UNIX
-            reader.setValue("Installed", "K1_Installed", "0");
-            reader.setValue("Paths", "K1_Path", "undef");
-#else
+
             this->logger->write("Path validated. Applying to INI config");
             reader.setValue("Installed", "K1_Installed", "1");
             reader.setValue("Paths", "K1_Path", ui->leKotor->text());
 
-            // this is to add vstore support
+#ifdef Q_OS_WIN32
+            // this is to add vstore support (Seems to be Windows only)
             this->logger->write("Applying secondary KotOR save info");
             QString kp;
             QDir s(ui->leKotor->text() + "\\saves");
@@ -256,6 +254,7 @@ void MainWindow::onINIExportClicked()
             if(s.exists()
                     && s.entryInfoList(QDir::NoDotAndDotDot|QDir::AllEntries).count() > 0)
                 k2p = ui->leKotor2->text() + "\\saves";
+                reader.setValue("Paths", "K2_SavePath", k2p.replace("/", "\\"));
             else
             {
                 QString pf;
@@ -266,10 +265,11 @@ void MainWindow::onINIExportClicked()
 
                 k2p = QString("%1%2\\LucasArts\\SWKotOR2\\saves").arg(VSTORE, pf);
             }
+
 #else
             k2p = KOTOR2_SAVES;
 #endif
-            reader.setValue("Paths", "K2_SavePath", k2p.replace("/", "\\"));
+
         }
         else
         {
