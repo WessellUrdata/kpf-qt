@@ -173,9 +173,7 @@ bool MainWindow::browse(QString location, const char *exe)
         if(file.exists())
         {
             dir.replace(QString(exe), "/");
-#ifdef Q_OS_WIN32
-            dir.replace("/", "\\");
-#endif
+
             dir.truncate(dir.length() - 1); // attempt to remove trailing slash
             tempPath = QString(dir);
             return true;
@@ -207,27 +205,6 @@ void MainWindow::onINIExportClicked()
             reader.setValue("Installed", "K1_Installed", "1");
             reader.setValue("Paths", "K1_Path", ui->leKotor->text());
 
-#ifdef Q_OS_WIN32
-            // this is to add vstore support (Seems to be Windows only)
-            this->logger->write("Applying secondary KotOR save info");
-            QString kp;
-            QDir s(ui->leKotor->text() + "\\saves");
-            if (s.exists()
-                    && s.entryInfoList(QDir::NoDotAndDotDot|QDir::AllEntries).count() > 0)
-                kp = ui->leKotor->text() + "\\saves";
-            else
-            {
-                QString pf;
-                if (is32Bit())
-                    pf = "Program Files";
-                else
-                    pf = "Program Files (x86)";
-
-                kp = QString("%1%2\\LucasArts\\Star Wars Knights of the Old Republic\\saves").arg(VSTORE, pf);
-            }
-
-            reader.setValue("Paths", "K1_SavePath", kp.replace("/", "\\"));
-#endif
         }
         else
         {
@@ -248,27 +225,7 @@ void MainWindow::onINIExportClicked()
 
             // VStore location unconfirmed for KotOR2
             QString k2p;
-#ifdef Q_OS_WIN32
-//            k2p = ui->leKotor2->text() + "\\saves";
-            QDir s(ui->leKotor2->text() + "\\saves");
-            if(s.exists()
-                    && s.entryInfoList(QDir::NoDotAndDotDot|QDir::AllEntries).count() > 0)
-                k2p = ui->leKotor2->text() + "\\saves";
-                reader.setValue("Paths", "K2_SavePath", k2p.replace("/", "\\"));
-            else
-            {
-                QString pf;
-                if (is32Bit())
-                    pf = "Program Files";
-                else
-                    pf = "Program Files (x86)";
-
-                k2p = QString("%1%2\\LucasArts\\SWKotOR2\\saves").arg(VSTORE, pf);
-            }
-
-#else
             k2p = KOTOR2_SAVES;
-#endif
 
         }
         else
@@ -276,7 +233,6 @@ void MainWindow::onINIExportClicked()
             this->logger->write("KotOR 2 not found. Applying default values");
             reader.setValue("Installed", "K2_Installed", "0");
             reader.setValue("Paths", "K2_Path", "undef");
-
             reader.setValue("Paths", "K2_SavePath", "undef");
         }
 
@@ -295,11 +251,7 @@ void MainWindow::onINIExportClicked()
             {
                 this->logger->write("Match found. Applying to INI config");
                 reader.setValue("Options", "Use_K2_Cloud", "1");
-#ifdef Q_OS_WIN32
-                reader.setValue("Paths", "K2_SavePathCloud", QString(csdir.absolutePath() + "\\" + dirs[i]).replace("/", "\\"));
-#else
                 reader.setValue("Paths", "K2_SavePathCloud", QString(csdir.absolutePath() + "/" + dirs[i]));
-#endif
                 break;
             }
             else
@@ -379,30 +331,10 @@ void MainWindow::detectPaths(bool rescan)
     {
         this->logger->write("Initializing registry scanner");
         this->changed = true;
-#ifdef Q_OS_WIN32
-        // We'll look for CD entries first.
-        this->cdShit("k1", KOTOR_CD_REG_KEY_32, KOTOR_CD_REG_KEY_64); // KotOR 1
-        this->cdShit("k2", KOTOR2_CD_REG_KEY_32, KOTOR2_CD_REG_KEY_64); // KotOR 2
-
-        // This hole block will be overlooked if GOG stuff is not found.
-        // Otherwise it'll look. But isn't fruitful if they're not from GOG
-        // GOG calles on Steam too. Same rule applies
-        RegistryReader reader;
-        reader.open(GOG_64_REG_KEY);
-        if(reader.hasGroup("Games"))
-            this->gogShit(GOG_64_REG_KEY);
-        else
-        {
-            reader.open(GOG_32_REG_KEY);
-            if(reader.hasGroup("Games"))
-                this->gogShit(GOG_32_REG_KEY);
-            else
-                this->steamShit();
-        }
-#else
+        // This used to be where GOG detection for Windows is. Now it's removed because it won't work
         this->logger->write("Registry not supported on current OS. Attempting scan of config files instead");
         this->steamShit();
-#endif
+
     }
 }
 
@@ -420,16 +352,8 @@ void MainWindow::steamShit()
     else
     {
         this->logger->write("Steam not found, getting Steam location from Registry");
-#ifdef Q_OS_WIN32
-        RegistryReader reader;
-        reader.open(STEAM_REG_KEY);
-
-        if(reader.getValue("SteamPath") != "")
-            steamPath = reader.getValue("SteamPath").replace("/", "\\");
-#else
         MsgBox msg(this, "Error", "Default Steam Path was not found, closing. (This will be fixed later...", MsgBox::Ok);
         msg.exec();
-#endif
     }
 
     QFile steamExe(steamPath + STEAM_EXE);
@@ -460,10 +384,6 @@ void MainWindow::steamShit()
                     k1f = QString("%1%2").arg(instBasePath, KOTOR_PATH);
                     k2f = QString("%1%2").arg(instBasePath, KOTOR2_PATH);
 
-#ifdef Q_OS_WIN32
-                    k1f.replace("\\\\", "\\").replace("/", "\\");
-                    k2f.replace("\\\\", "\\").replace("/", "\\");
-#endif
                     QFile k1(k1f + KOTOR_EXE);
 
                     if(k1.exists())
@@ -504,38 +424,9 @@ void MainWindow::steamShit()
 // GOG stuff is win32 for now. I'll work with other OS's when GOG adds KotOR2 to Linux
 void MainWindow::gogShit(QString gogKey)
 {
-#ifdef Q_OS_WIN32
-    bool k1found = false, k2found = false;
-    RegistryReader reader;
-    reader.open(gogKey + "\\Games");
-    if(reader.hasGroup("1207666283"))
-    {
-        this->logger->write("KotOR 1 found for GOG. Applying to UI");
-        reader.open(gogKey + "\\Games\\1207666283");
-        ui->leKotor->setText(reader.getValue("PATH"));
-        k1found = true;
-    }
-    reader.open(gogKey + "\\Games"); // Remember using reader to open another key? Gotta reopen the last one ;p
-    if(reader.hasGroup("1421404581"))
-    {
-        this->logger->write("KotOR 2 found for GOG. Applying to UI");
-        reader.open(gogKey + "\\Games\\1421404581");
-        ui->leKotor2->setText(reader.getValue("PATH"));
-        k2found = true;
-    }
-
-    // Now we run the steam check if one or none of the
-    // following conditions are met
-    this->logger->write("Determining if Steam needs to be checked for Paths");
-    if((k1found == false || k2found == false))
-    {
-        this->logger->write("Initializing steam search");
-        this->steamShit();
-    }
-#else
+    // GOG detection is Windows only, thus deleted
     this->logger->write("Initializing steam search");
     this->steamShit();
-#endif
 }
 
 void MainWindow::cdShit(QString game, QString key32, QString key64)
@@ -587,12 +478,7 @@ void MainWindow::onMenuItemDeleteClicked()
         if(msg.exec() == MsgBox::Yes)
         {
             this->logger->write("Confirmed deletion, deleting INI");
-#ifdef Q_OS_WIN32
-            QDir dir(QString(INI_PATH).replace("kse.ini", ""));
-            dir.removeRecursively();
-#else
             ini.remove();
-#endif
             msg = MsgBox(this, "INI Removal Successfull", "kse.ini has been successfully removed!", MsgBox::Ok);
             msg.exec();
         }
@@ -636,12 +522,7 @@ void MainWindow::onMenuItemLogsClicked()
     {
         // Windows won't run Explorer for some reason
         // At least QProcess works....ass
-#ifdef Q_OS_WIN32
-       QString proc("C:\\Windows\\explorer.exe");
-       QProcess::startDetached(proc, QStringList(dir.absolutePath().replace("/", "\\")));
-#else
         QDesktopServices::openUrl(QString(LOGS_DIR));
-#endif
     }
     else
     {
