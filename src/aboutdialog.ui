@@ -164,6 +164,10 @@ background-position: 5px 5px;</string>
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>bWebsite</tabstop>
+  <tabstop>bClose</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

@@ -25,5 +25,5 @@ void AboutDialog::onCloseClick()
 
 void AboutDialog::onWebsiteClick()
 {
-    QDesktopServices::openUrl(QUrl("https://gitlab.com/kotorsge-team"));
+    QDesktopServices::openUrl(QUrl("https://github.com/WessellUrdata/kpf-qt"));
 }
