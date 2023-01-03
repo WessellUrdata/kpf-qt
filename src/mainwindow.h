@@ -18,7 +18,6 @@
 
 #include "refs.h"
 #include "inireader.h"
-#include "registryreader.h"
 #include "aboutdialog.h"
 #include "logger.h"
 #include "msgbox.h"
@@ -61,7 +60,6 @@ private:
     void detectPaths(bool);
     void cdShit(QString game, QString key32, QString key64);
     void steamShit();
-    void gogShit(QString);
     bool browse(QString location, const char *);
     bool is32Bit();
 

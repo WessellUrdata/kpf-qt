@@ -263,6 +263,7 @@ void MainWindow::onINIExportClicked()
         }
 
         // Last couble of values. We'll leave as null for now
+        // This is probably for Kotor 3 - The Jedi Masters Mod. Not supported for now
         reader.setValue("Installed", "TJM_Installed", "0");
         reader.setValue("Paths", "TJM_Path", "undef");
 
@@ -293,7 +294,7 @@ void MainWindow::onRescanClicked()
 
 void MainWindow::loadINI()
 {
-    this->logger->write("Checking for existance of INI");
+    this->logger->write("Checking for existence of INI");
     QFile iniFile(INI_PATH);
     if(iniFile.exists())
     {
@@ -342,7 +343,7 @@ void MainWindow::detectPaths(bool rescan)
 // Method is cleaned up a bit. I'll rename later
 void MainWindow::steamShit()
 {
-    this->logger->write("Checking for existance of Steam");
+    this->logger->write("Checking for existence of Steam");
     QFile file(QString("%1%2").arg(DEFAULT_STEAM_PATH, STEAM_EXE));
     if(file.exists())
     {
@@ -419,39 +420,6 @@ void MainWindow::steamShit()
     }
 
 
-}
-
-// GOG stuff is win32 for now. I'll work with other OS's when GOG adds KotOR2 to Linux
-void MainWindow::gogShit(QString gogKey)
-{
-    // GOG detection is Windows only, thus deleted
-    this->logger->write("Initializing steam search");
-    this->steamShit();
-}
-
-void MainWindow::cdShit(QString game, QString key32, QString key64)
-{
-    RegistryReader reader;
-    reader.open(key32); // check 32 bit first // 64 if 32 isn't found
-    if(reader.hasKey("Path"))
-    {
-        if(game == "k1")
-            ui->leKotor->setText(reader.getValue("Path"));
-        else if(game == "k2")
-            ui->leKotor2->setText(reader.getValue("Path"));
-    }
-    else
-    {
-        // 32 bit found nothing. Moving to 64 bit
-        reader.open(key64);
-        if(reader.hasKey("Path"))
-        {
-            if(game == "k1")
-                ui->leKotor->setText(reader.getValue("Path"));
-            else if(game == "k2")
-                ui->leKotor2->setText(reader.getValue("Path"));
-        }
-    }
 }
 
 void MainWindow::onMenuItemExitClicked()

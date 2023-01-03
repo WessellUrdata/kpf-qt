@@ -16,40 +16,14 @@
 
 //#define SUPPORT // uncomment for branch: kse-337a-support
 
-#ifdef Q_OS_WIN32
-    #define KOTOR_EXE "/swkotor.ini"
-    #define KOTOR2_EXE "/swkotor2.ini"
-    #define KOTOR2_CLOUD_SAVES "/cloudsaves"
-    #define DEFAULT_STEAM_PATH "C:\\Program Files (x86)\\Steam"
-    #define STEAM_EXE "/steam.exe"
-    #define INI_BACKUP QString("%1/AppData/Local/Temp/kse.ini.bak").arg(QDir::homePath())
-    #define VSTORE QString("%1/AppData/Local/VirtualStore/").arg(QDir::homePath())
-    #define LOGS_DIR "./logs/"
-    #ifndef SUPPORT
-        #define INI_PATH QString("%1/AppData/Local/KSE/kse.ini").arg(QDir::homePath())
-    #else
-        #define INI_PATH QString("kse.ini")
-    #endif
-#else
-    #define KOTOR_EXE "/swkotor.exe"
-    #define KOTOR2_EXE "/KOTOR2"
-    #define KOTOR2_SAVES QString("%1/.local/share/aspyr-media/kotor2/saves").arg(QDir::homePath())
-    #define DEFAULT_STEAM_PATH QString("%1/.local/share/Steam").arg(QDir::homePath())
-    #define STEAM_EXE "/steam.sh"
-    #define INI_BACKUP QString("%1/.local/kse/kse.ini.backup").arg(QDir::homePath())
-    #define INI_PATH QString("%1/kse/kse.ini").arg(QDir::homePath())
-    #define LOGS_DIR QString("%1/kse/logs/").arg(QDir::homePath())
-#endif
-
-#ifdef Q_OS_WIN32
-    #define STEAM_REG_KEY "HKEY_CURRENT_USER\\SOFTWARE\\Valve\\Steam"
-    #define GOG_32_REG_KEY "HKEY_LOCAL_MACHINE\\SOFTWARE\\GOG.com"
-    #define GOG_64_REG_KEY "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\GOG.com"
-    #define KOTOR_CD_REG_KEY_32 "HKEY_LOCAL_MACHINE\\SOFTWARE\\BioWare\\sw\\KOTOR"
-    #define KOTOR_CD_REG_KEY_64 "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\BioWare\\sw\\KOTOR"
-    #define KOTOR2_CD_REG_KEY_32 "HKEY_LOCAL_MACHINE\\SOFTWARE\\Lucasarts\\KOTOR2"
-    #define KOTOR2_CD_REG_KEY_64 "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432node\\Lucasarts\\KOTOR2"
-#endif
+#define KOTOR_EXE "/swkotor.exe"
+#define KOTOR2_EXE "/KOTOR2"
+#define KOTOR2_SAVES QString("%1/.local/share/aspyr-media/kotor2/saves").arg(QDir::homePath())
+#define DEFAULT_STEAM_PATH QString("%1/.local/share/Steam").arg(QDir::homePath())
+#define STEAM_EXE "/steam.sh"
+#define INI_BACKUP QString("%1/.local/kse/kse.ini.backup").arg(QDir::homePath())
+#define INI_PATH QString("%1/kse/kse.ini").arg(QDir::homePath())
+#define LOGS_DIR QString("%1/kse/logs/").arg(QDir::homePath())
 
 #endif // REFS_H
 
