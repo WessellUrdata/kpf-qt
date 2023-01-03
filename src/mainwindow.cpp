@@ -352,8 +352,8 @@ void MainWindow::steamShit()
     }
     else
     {
-        this->logger->write("Steam not found, getting Steam location from Registry");
-        MsgBox msg(this, "Error", "Default Steam Path was not found, closing. (This will be fixed later...", MsgBox::Ok);
+        this->logger->write("Steam not found.");
+        MsgBox msg(this, "Error", "Default Steam Path was not found, closing.", MsgBox::Ok);
         msg.exec();
     }
 
@@ -366,55 +366,33 @@ void MainWindow::steamShit()
         {
             this->logger->write("Scanning libraryfolders.vdf for library information");
             QTextStream in(&libraryfolders);
-            bool k = false, kk = false, stop = false; // might remove...
-            while((!in.atEnd()) && stop == false)
+            while (!in.atEnd())
             {
-                QString line = in.readLine();
-                QString k1f;
-                QString k2f;
-                // I don't see users using this many install directories. Do you? Nah :p
-                // A nice buffer I guess
-                for(int i = 0; i < 50; i++)
-                {
-                    QString instBasePath;
-                    if(line.trimmed().startsWith(QString("\"path\"")))
-                        instBasePath = line.replace(QString("\"path\""), "").trimmed().replace("\"", "");
-                    else
-                        instBasePath = steamPath;
 
-                    k1f = QString("%1%2").arg(instBasePath, KOTOR_PATH);
-                    k2f = QString("%1%2").arg(instBasePath, KOTOR2_PATH);
+                QString line = in.readLine();
+
+                if (line.trimmed().startsWith(QString("\"path\""))) {
+
+                    QString instBasePath = line.replace(QString("\"path\""), "").trimmed().replace("\"", "");
+
+                    QString k1f = QString("%1%2").arg(instBasePath, KOTOR_PATH);
+                    QString k2f = QString("%1%2").arg(instBasePath, KOTOR2_PATH);
 
                     QFile k1(k1f + KOTOR_EXE);
-
                     if(k1.exists())
                     {
-
                         ui->leKotor->setText(k1f);
-                        k = true;
-                        if(k)
-                            this->logger->write("KotOR 1 found. Applying to UI");
+                        this->logger->write("KotOR 1 found. Applying to UI");
                     }
 
                     QFile k2(k2f + KOTOR2_EXE);
                     if(k2.exists())
                     {
-
                         ui->leKotor2->setText(k2f);
-                        kk = true;
-                        if(kk)
-                            this->logger->write("KotOR 2 found. Applying to UI");
-                    }
-
-                    // Be prepared. Big if statement, I'll do what I can
-                    // to clean it up later
-                    if((k && kk) ||
-                            (k || kk))
-                    {
-                        stop = true;
-                        break;
+                        this->logger->write("KotOR 2 found. Applying to UI");
                     }
                 }
+
             }
         }
     }

@@ -12,10 +12,6 @@
 #include <QDir>
 #include <QScreen>
 
-#ifdef Q_OS_WIN32
-    #include <QProcess>
-#endif
-
 #include "refs.h"
 #include "inireader.h"
 #include "aboutdialog.h"
