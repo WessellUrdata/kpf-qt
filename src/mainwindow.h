@@ -6,7 +6,6 @@
 #include <QRegularExpression>
 #include <QTextStream>
 #include <QCloseEvent>
-#include <QDesktopWidget>
 #include <QDesktopServices>
 #include <QDirIterator>
 #include <QDir>
