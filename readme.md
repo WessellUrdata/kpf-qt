@@ -1,5 +1,7 @@
 # KPF Qt (for Linux)
 
+**I am currently working on a cross-platform KOTOR Savegame Editor clone/remake. Until then, this project will be put on hold and only bugfixes will be dealt with.**
+
 ## About
 
 This is a fork of the KotOR PathFinder originally hosted on [the GitLab repo](https://gitlab.com/kotorsge-team/kpf-qt).
